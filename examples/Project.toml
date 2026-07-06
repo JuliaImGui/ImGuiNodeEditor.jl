@@ -1,0 +1,8 @@
+[deps]
+CImGui = "5d785b6c-b76f-510e-a07c-3070796c7e87"
+GLFW = "f7f18e0c-5ee9-5ccd-a5bf-e8befd85ed98"
+ImGuiNodeEditor = "85025696-5a8b-405d-b30a-426ddbef1325"
+ModernGL = "66fc600b-dfda-50eb-8b99-91cfa97b1301"
+
+[sources]
+ImGuiNodeEditor = {path = ".."}

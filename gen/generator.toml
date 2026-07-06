@@ -1,0 +1,7 @@
+[general]
+library_name = "libcimnodes_editor"
+module_name = "lib"
+prologue_file_path = "prologue.jl"
+
+[codegen]
+field_access_method_list = ["Config", "cimnodes_editor_Style"]
