@@ -13,7 +13,7 @@ Changelog.generate(
     Changelog.Documenter(),
     joinpath(@__DIR__, "src/_changelog.md"),
     joinpath(@__DIR__, "src/changelog.md"),
-    repo="JuliaImGui/CImGui.jl"
+    repo="JuliaImGui/ImGuiNodeEditor.jl"
 )
 
 makedocs(; repo = Remotes.GitHub("JuliaImGui", "ImGuiNodeEditor.jl"),
@@ -31,4 +31,4 @@ makedocs(; repo = Remotes.GitHub("JuliaImGui", "ImGuiNodeEditor.jl"),
          modules = [ImGuiNodeEditor],
          )
 
-deploydocs(; repo="github.com/JuliaImGui/ImGuiTestEngine.jl.git")
+deploydocs(; repo="github.com/JuliaImGui/ImGuiNodeEditor.jl.git")
