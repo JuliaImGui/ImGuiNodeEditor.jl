@@ -5,3 +5,4 @@ prologue_file_path = "prologue.jl"
 
 [codegen]
 field_access_method_list = ["Config", "cimnodes_editor_Style"]
+use_ccall_macro = true

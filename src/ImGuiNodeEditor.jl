@@ -12,9 +12,17 @@ include("wrapper.jl")
 Factor by which the canvas magnifies drawn content on screen: `> 1` when zoomed
 in, `< 1` when zoomed out. This is the reciprocal of [`GetCurrentZoom`](@ref),
 which returns the canvas InvScale (and so reads backwards). Returns `1` when no
-editor is active.
+editor is active, or when the zoom is non-positive (which a corrupt settings
+file or a bad `CustomZoomLevels` can produce).
 """
-current_scale() = (zoom = GetCurrentZoom(); zoom > 0 ? 1f0 / zoom : 1f0)
+function current_scale()
+    if GetCurrentEditor() == C_NULL
+        return 1f0
+    end
+
+    zoom = GetCurrentZoom()
+    return zoom > 0 ? 1f0 / zoom : 1f0
+end
 
 """
     @with_font_scale scale body

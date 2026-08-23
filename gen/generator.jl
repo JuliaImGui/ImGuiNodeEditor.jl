@@ -13,6 +13,18 @@ This anonymous module contains the raw bindings from Clang.jl.
 """
 bindings_module::Module = Module()
 
+# Structs whose fields should have their cimgui '_c' suffix stripped
+const field_rename_whitelist = (:NodeId, :PinId, :LinkId)
+
+# Buffer functions mapped to the call yielding how many items are available.
+# GetOrderedNodeIds() can't be passed a null buffer, so it uses GetNodeCount().
+const buffer_count_sources =
+    Dict("ax_NodeEditor_GetSelectedNodes" => :(lib.ax_NodeEditor_GetSelectedNodes(C_NULL, 0)),
+         "ax_NodeEditor_GetSelectedLinks" => :(lib.ax_NodeEditor_GetSelectedLinks(C_NULL, 0)),
+         "ax_NodeEditor_GetActionContextNodes" => :(lib.ax_NodeEditor_GetActionContextNodes(C_NULL, 0)),
+         "ax_NodeEditor_GetActionContextLinks" => :(lib.ax_NodeEditor_GetActionContextLinks(C_NULL, 0)),
+         "ax_NodeEditor_GetOrderedNodeIds" => :(lib.ax_NodeEditor_GetNodeCount()))
+
 struct WrapperMethod
     name::Union{Expr, Symbol}
     docstring::String
@@ -33,11 +45,19 @@ function create_docstring(func_name, overload)
         docstring *= "\n\n$(formatted_comment)"
     end
 
-    header, line = split(overload[:location], ':')
-    imnodes_editor_version = "master"
-    link = "https://github.com/thedmd/imgui-node-editor/blob/$(imnodes_editor_version)/$(header).h#L$(line)"
+    if func_name === :ax_NodeEditor_Config_Config_Config
+        docstring *= "\n\nThe returned `Config` is heap-allocated, it must be freed with [`Destroy`](@ref)."
+    end
 
-    docstring *= "\n\n[Upstream link]($link)."
+    # Synthesized overloads (e.g. the id constructors/accessors) have no location.
+    location = get(overload, :location, "")
+    if !isempty(location)
+        header, line = split(location, ':')
+        imnodes_editor_version = "master"
+        link = "https://github.com/thedmd/imgui-node-editor/blob/$(imnodes_editor_version)/$(header).h#L$(line)"
+
+        docstring *= "\n\n[Upstream link]($link)."
+    end
 
     return docstring
 end
@@ -52,9 +72,8 @@ function imgui_to_jl_type(ig_type)
         return parsed_type
     end
 
-    # Figure out what other types should be allowed as arguments. Otherwise
-    # users would have to be careful to only pass in e.g. Int32's for ImGuiID,
-    # which is quite annoying.
+    # Allow other argument types too, so that users don't have to pass e.g.
+    # exactly an Int32 for ImGuiID.
     unions = if parsed_type === :ImVec2
         # ImVec2 and ImVec4 have special support for NTuple's
         [:(NTuple{2})]
@@ -66,14 +85,12 @@ function imgui_to_jl_type(ig_type)
         []
     end
 
-    # ImGui always defines type aliases for enum primitive types, and then a
-    # separate enum type with a trailing underscore. Here we check if such an
-    # enum type exists and add it to the union if so.
+    # ImGui pairs each enum primitive alias with a separate enum type suffixed
+    # with '_', so add that to the union if it exists.
     enum_type = Symbol(parsed_type, :_)
     try
-        # Note that we have to use getproperty() and catch an exception because
-        # `bindings_module` is an anonymous module, for which propertynames()
-        # doesn't work as usual.
+        # getproperty() + catch, because propertynames() doesn't work as usual
+        # on anonymous modules.
         @invokelatest getproperty(bindings_module, enum_type)
         pushfirst!(unions, enum_type)
     catch ex
@@ -195,18 +212,10 @@ function to_jl_type(func_name, func_idx, arg_idx, overloads)
     elseif unqualified_type == "char"
         [:Char]
     elseif unqualified_type == "char*"
-        # Strings are complicated. Usually we want to pass String objects but
-        # sometimes it's also desirable to pass C_NULL. For this reason we try
-        # to allow passing a Ptr{Cvoid} to a string argument when possible, but
-        # that can cause method ambiguities when one overload takes in a string
-        # and the other takes in a pointer. The second will be given a
-        # PtrOrRef{T} type which is a type union that includes Ptr{Cvoid}, so if
-        # the string overload also allows taking in a Ptr{Cvoid} we might get a
-        # method ambiguity.
-        #
-        # To avoid this we check the types of the arguments in all the overloads
-        # with the same name and position. If any of them are non-string
-        # pointers we forbid passing a Ptr{Cvoid} to the string overload.
+        # We'd like to allow C_NULL as well as String, but a Ptr{Cvoid} here can
+        # be ambiguous with another overload taking a pointer (which is given a
+        # PtrOrRef{T}, a union that includes Ptr{Cvoid}). So only allow it if no
+        # other overload takes a non-string pointer by the same name or position.
         is_different_ptr = x -> x != unqualified_type && contains(x, "*")
         has_non_string_ptr = (!isnothing(findfirst(is_different_ptr, overload_arg_types))
                               || !isnothing(findfirst(is_different_ptr, positional_overload_arg_types)))
@@ -222,15 +231,15 @@ function to_jl_type(func_name, func_idx, arg_idx, overloads)
         [:Cvoid]
     elseif unqualified_type == "size_t"
         [:Int]
+    elseif unqualified_type == "uintptr_t"
+        is_ptr ? [:UInt] : [:Integer]
     else
         error("Unsupported C type: '$(type_str)'")
     end
 
     return if is_ptr
-        # If this argument is the only one that has a different type from the
-        # other arguments across all the overloads, and the other overloads all
-        # have pointers for this argument too, then we can't allow Ptr{Cvoid}
-        # because of method ambiguity.
+        # Ptr{Cvoid} would be ambiguous if this is the only differing argument
+        # and the other overloads take a pointer here too.
         correct_ptr_type = shares_other_args ? :PtrOrRef : :VoidablePtrOrRef
 
         if length(unions) == 1
@@ -255,30 +264,40 @@ function wrap_function!(methods, func_name, func_def, overloads; with_arg_types=
     func_idx = findfirst(x -> x[:ov_cimguiname] === string(func_name), overloads)
     func_metadata = overloads[func_idx]
 
-    # Filter out variadic arguments. These are always related to string
-    # formatting and it's simpler to let that be done in Julia by the users.
+    # Variadic args are always string formatting, which is simpler to do in Julia.
     arg_names = filter(!=(:(va_list...)), func_def[:args])
     arg_types_strs = [func_metadata[:argsT][i][:type] for i in eachindex(arg_names)]
 
     args = copy(arg_names)
 
+    # Constructors are added to the struct type, so their arguments must always be
+    # annotated to avoid overwriting Julia's default constructor.
+    is_constructor = get(func_metadata, :constructor, false)
+
     for i in eachindex(args)
         arg_type_str = arg_types_strs[i]
 
-        # If this is the `self` argument and this function belongs to a struct,
-        # then it must be the self object.
+        # `self` may be passed by pointer or by value (e.g. the id accessors).
         if arg_names[i] == :self && func_metadata[:stname] != ""
-            args[i] = :($(args[i])::Ptr{$(Symbol(func_metadata[:stname]))})
+            self_type = Symbol(func_metadata[:stname])
+            args[i] = if endswith(arg_type_str, "*")
+                :($(args[i])::Ptr{$self_type})
+            else
+                :($(args[i])::$self_type)
+            end
         elseif arg_type_str == "StyleVar"
             args[i] = :($(args[i])::StyleVar)
-        elseif arg_type_str in ("PinId", "PinId*")
-            args[i] = :($(args[i])::Ptr{PinId})
-        elseif arg_type_str in ("NodeId", "NodeId*")
-            args[i] = :($(args[i])::Ptr{NodeId})
-        elseif (with_arg_types
+        elseif arg_type_str == "PinId"
+            args[i] = :($(args[i])::PinId)
+        elseif arg_type_str == "NodeId"
+            args[i] = :($(args[i])::NodeId)
+        elseif arg_type_str in ("PinId*", "NodeId*", "LinkId*")
+            args[i] = :($(args[i])::VoidablePtrOrRef{$(Symbol(chopsuffix(arg_type_str, "*")))})
+        # elseif arg_type_str == "LinkId"
+        #     args[i] = :($(args[i])::LinkId)
+        elseif (with_arg_types || is_constructor
                 # We don't support parsing array types yet
                 || (contains(arg_type_str, "Im") && !contains(arg_type_str, '[')))
-            # Always try to parse arg types if `arg_types` is true, or if it's any non-array ImGui type
             type = to_jl_type(func_name, func_idx, i, overloads)
             args[i] = :($(args[i])::$(type))
         end
@@ -292,13 +311,15 @@ function wrap_function!(methods, func_name, func_def, overloads; with_arg_types=
             # Replace all float literals of the form '1f' or '0.0f' etc with '1f0'/'0.0f0'
             default = replace(default, r"\df" => x -> "$(x[1])f0")
 
+            # Rewrite C++ scoped enum values like `FlowDirection::Forward` to the
+            # `FlowDirection_Forward` aliases we generate for them. Julia would
+            # otherwise parse the `::` as a type assertion.
+            default = replace(default, r"(\w+)::(\w+)" => s"\1_\2")
+
             default_expr = Meta.parse(default)
 
-            # If the argument is annotated with a concrete `Ptr{T}` but the
-            # default is the untyped `C_NULL` (a `Ptr{Cvoid}`), construct the
-            # correctly-typed null pointer instead. Otherwise the default-arg
-            # method would pass a `Ptr{Cvoid}` into a `Ptr{T}` slot and fail to
-            # match its own annotation.
+            # A bare C_NULL wouldn't match a concrete Ptr{T} annotation, so
+            # construct a correctly-typed null pointer instead.
             if default_expr === :C_NULL && Meta.isexpr(args[i], :(::))
                 argtype = args[i].args[2]
                 if Meta.isexpr(argtype, :curly) && argtype.args[1] === :Ptr
@@ -310,21 +331,57 @@ function wrap_function!(methods, func_name, func_def, overloads; with_arg_types=
         end
     end
 
-    ig_name = Symbol(func_metadata[:funcname])
+    stname = func_metadata[:stname]
 
-    # Create the identifier for the wrapper function. If it's a constructor then
-    # we need to add the method to the original type in the `lib` submodule to
-    # avoid shadowing the *type* in `lib` with the *function* in the top-level
-    # module. We also capitalize the name for backwards compatibility with the
-    # manually created wrappers.
-    capitalized_name = Symbol(uppercasefirst(string(ig_name)))
-    new_identifier = get(func_metadata, :constructor, false) ? :(lib.$capitalized_name) : capitalized_name
+    # Some member functions (e.g. the id accessors) keep the full C name, so strip
+    # the namespace and struct prefixes off it.
+    ig_name = chopprefix(func_metadata[:funcname], "ax_NodeEditor_")
+    if stname != ""
+        ig_name = chopprefix(ig_name, "$(stname)_")
+    end
+
+    # Constructors are added to the type in `lib` to avoid shadowing it with a
+    # function in the top-level module. Names are capitalized for backwards
+    # compatibility with the manually created wrappers.
+    capitalized_name = Symbol(uppercasefirst(ig_name))
+    new_identifier = if get(func_metadata, :constructor, false)
+        :(lib.$(Symbol(stname)))
+    else
+        capitalized_name
+    end
 
     func_expr = :($new_identifier($(args...)) = lib.$func_name($(arg_names...)))
 
     docstring = create_docstring(func_name, func_metadata)
 
-    push!(methods, WrapperMethod(new_identifier, docstring, prettify(func_expr)))
+    if haskey(buffer_count_sources, string(func_name))
+        wrap_buffer_function!(methods, func_name, capitalized_name,
+                              Symbol(chopsuffix(arg_types_strs[1], "*")), docstring)
+    else
+        push!(methods, WrapperMethod(new_identifier, docstring, prettify(func_expr)))
+    end
+end
+
+"""
+Wrap a function that fills a caller-provided buffer of ids. These get a `!`
+method that resizes the buffer to fit before filling it, plus an allocating
+method that returns a fresh Vector.
+"""
+function wrap_buffer_function!(methods, func_name, capitalized_name, id_type, docstring)
+    bang_name = Symbol(capitalized_name, :!)
+
+    bang_expr = :(function $bang_name(ids::Vector{$id_type})
+                      resize!(ids, $(buffer_count_sources[string(func_name)]))
+                      lib.$func_name(ids, length(ids))
+                      return ids
+                  end)
+    alloc_expr = :($capitalized_name() = $bang_name($id_type[]))
+
+    push!(methods, WrapperMethod(bang_name, docstring * "\n\n`ids` is resized to fit and returned.",
+                                 prettify(bang_expr)))
+    push!(methods, WrapperMethod(capitalized_name,
+                                 "\$(TYPEDSIGNATURES)\n\nAllocating variant of [`$(bang_name)`](@ref).",
+                                 prettify(alloc_expr)))
 end
 
 """
@@ -339,6 +396,15 @@ function wrap_destructor!(methods, func_name)
     push!(methods, WrapperMethod(:Destroy, "Destructor for `$type`", prettify(func_expr)))
 end
 
+function get_new2old()
+    # Newer cimnodes_editor bindings suffix non-POD-types-that-look-like-POD-types
+    # with '_c', so rename them back to their old names.
+    # See: https://github.com/cimgui/cimgui/issues/309
+    structs_and_enums = JSON3.read(cimnodes_editor_jll.cimnodes_editor_structs_and_enums)
+    nonpod_used = structs_and_enums[:nonPOD_used]
+    new2old_names = Dict([Symbol(x, "_c") => x for x in keys(nonpod_used)])
+end
+
 """
 Iterate over all the functions in the DAG and create wrapper Expr's for them.
 """
@@ -347,6 +413,7 @@ function get_wrappers(dag::ExprDAG)
     structs = String[]
     enums = Symbol[]
     imgui_defs = JSON3.read(cimnodes_editor_jll.cimnodes_editor_definitions)
+    new2old_names = get_new2old()
 
     for node in dag.nodes
         for (i, expr) in enumerate(node.exprs)
@@ -373,10 +440,8 @@ function get_wrappers(dag::ExprDAG)
 
                     wrap_function!(methods, func_name, func_def, all_overloads)
                 else
-                    # Check if this is an overload, in which case the function
-                    # name will something like `name_type()` or
-                    # `struct_name_type()`. We need to strip the `type` part off
-                    # to index into `imgui_defs`.
+                    # Overloads are named `name_type()` or `struct_name_type()`, so
+                    # strip the `type` suffix off to index into `imgui_defs`.
                     split_name = rsplit(string(func_name), "_"; limit=2)
                     if length(split_name) == 1
                         continue
@@ -400,8 +465,8 @@ function get_wrappers(dag::ExprDAG)
                         end
                     end
                 end
-            elseif Meta.isexpr(expr, :struct)# && node.id ∉ struct_ignorelist
-                struct_name = string(node.id)
+            elseif Meta.isexpr(expr, :struct)
+                struct_name = get(new2old_names, node.id, node.id) |> string
                 push!(structs, struct_name)
             elseif Meta.isexpr(expr, :macrocall) && expr.args[1] == Symbol("@cenum")
                 push!(enums, node.id)
@@ -425,13 +490,7 @@ function rewrite!(dag)
         end
     end
 
-    # In newer versions of the cimnodes_editor bindings non-POD-types-that-look-like-POD-types-but-actually-aren't
-    # are renamed to have a '_c' underscore. In the generated Julia bindings we
-    # rename these back to their old names for the sake of convenience.
-    # See: https://github.com/cimgui/cimgui/issues/309
-    structs_and_enums = JSON3.read(cimnodes_editor_jll.cimnodes_editor_structs_and_enums)
-    nonpod_used = structs_and_enums[:nonPOD_used]
-    new2old_names = Dict([Symbol(x, "_c") => x for x in keys(nonpod_used)])
+    new2old_names = get_new2old()
 
     for node in nodes
         for i in eachindex(node.exprs)
@@ -440,6 +499,16 @@ function rewrite!(dag)
                     new2old_names[x]
                 else
                     x
+                end
+            end
+
+            # cimgui also suffixes fields that clash with a member function of the
+            # same name (e.g. NodeId::value()), so strip those too.
+            if Meta.isexpr(node.exprs[i], :struct) && node.exprs[i].args[2] in field_rename_whitelist
+                for f in node.exprs[i].args[3].args
+                    if Meta.isexpr(f, :(::)) && endswith(string(f.args[1]), "_c")
+                        f.args[1] = Symbol(chopsuffix(string(f.args[1]), "_c"))
+                    end
                 end
             end
         end
@@ -480,8 +549,7 @@ function generate()
         @info "Generating wrapper.jl..."
         println()
 
-        # Load the bindings into a module so we can inspect them when generating
-        # the wrappers.
+        # Load the bindings so we can inspect them while generating the wrappers.
         global bindings_module = Module()
         @eval bindings_module using cimnodes_editor_jll
         Base.include(bindings_module, options["general"]["output_file_path"])
@@ -490,9 +558,22 @@ function generate()
         methods, structs, enums = get_wrappers(ctx.dag)
         output_file = joinpath(@__DIR__, "../src/wrapper.jl")
         open(output_file; write=true) do io
-            # Write the struct 'typedefs'
-            for s in filter(!contains("_"), structs)
-                write(io, "const $s = lib.$s\n")
+            write(io,
+                  """
+                  const PtrOrRef{T} = Union{Ptr{T}, Ref{T}} where T
+                  const VoidablePtrOrRef{T} = Union{Ptr{T}, Ref{T}, Ptr{Cvoid}} where T
+
+                  """)
+
+            # Write the struct 'typedefs', dropping the cimgui namespace prefix
+            @show structs
+            for s in structs
+                name = chopprefix(s, "cimnodes_editor_")
+                if contains(name, "_")
+                    continue
+                end
+
+                write(io, "const $name = lib.$s\n")
             end
             write(io, "\n")
 
@@ -509,38 +590,6 @@ function generate()
                 write(io, "\n")
             end
 
-            # Manually wrap the constructor / value / destructor helpers that
-            # cimgui generates for the opaque non-POD id types
-            # (NodeId/PinId/LinkId). These aren't present in the upstream
-            # definitions JSON, so get_wrappers() can't pick them up
-            # automatically.
-            manual_names = String[]
-            for type in ("NodeId", "PinId", "LinkId")
-                ctor = "ax_NodeEditor_$type"
-                write(io, """
-                \"\"\"
-                    $type(value::Integer)
-
-                Construct an opaque `$type` handle (a `Ptr{$type}`) from an integer id.
-                \"\"\"
-                $type(value::Integer) = lib.$ctor(value)
-
-                \"\"\"
-                    value(id::Ptr{$type})
-
-                Return the integer id backing a `$type` handle.
-                \"\"\"
-                value(id::Ptr{$type}) = lib.$(ctor)_value(id)
-
-                \"\"\"
-                Destructor for `$type`.
-                \"\"\"
-                Destroy(id::Ptr{$type}) = lib.$(ctor)_destroy(id)
-
-                """)
-                append!(manual_names, (type, "value", "Destroy"))
-            end
-
             # Write the methods
             for w in methods
                 write(io,
@@ -550,8 +599,8 @@ function generate()
                       \"\"\"
                       """)
 
-                # If the function name is exported from Base then we need to explicitly
-                # declare a new function with `function` to avoid warnings on 1.12+.
+                # Names exported from Base need an explicit declaration to avoid
+                # warnings on 1.12+.
                 if Base.isexported(Base, Symbol(w.name))
                     write(io, "function $(w.name) end\n")
                 end
@@ -560,7 +609,7 @@ function generate()
             end
 
             # Write the `public` statement
-            function_names = unique(vcat([string(w.name) for w in methods], manual_names))
+            function_names = unique([string(w.name) for w in methods])
             # Filter out methods of another module and internal methods
             filter!(x -> !startswith(x, "lib.") && !startswith(x, "_"), function_names)
             function_names = join(function_names, ", ")
