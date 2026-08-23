@@ -1,10 +1,12 @@
-const NodeId = lib.NodeId
+const PtrOrRef{T} = Union{Ptr{T},Ref{T}} where {T}
+const VoidablePtrOrRef{T} = Union{Ptr{T},Ref{T},Ptr{Cvoid}} where {T}
+
 const LinkId = lib.LinkId
+const NodeId = lib.NodeId
 const PinId = lib.PinId
 const EditorContext = lib.EditorContext
 const Config = lib.Config
-const SafeType = lib.SafeType
-const SafePointerType = lib.SafePointerType
+const Style = lib.cimnodes_editor_Style
 
 const PinKind = lib.PinKind
 const PinKind_Input = lib.Input
@@ -82,64 +84,9 @@ const StyleVar_SelectedNodeBorderOffset = lib.StyleVar_SelectedNodeBorderOffset
 const StyleVar_Count = lib.StyleVar_Count
 
 """
-    NodeId(value::Integer)
-
-Construct an opaque `NodeId` handle (a `Ptr{NodeId}`) from an integer id.
-"""
-NodeId(value::Integer) = lib.ax_NodeEditor_NodeId(value)
-
-"""
-    value(id::Ptr{NodeId})
-
-Return the integer id backing a `NodeId` handle.
-"""
-value(id::Ptr{NodeId}) = lib.ax_NodeEditor_NodeId_value(id)
-
-"""
-Destructor for `NodeId`.
-"""
-Destroy(id::Ptr{NodeId}) = lib.ax_NodeEditor_NodeId_destroy(id)
-
-"""
-    PinId(value::Integer)
-
-Construct an opaque `PinId` handle (a `Ptr{PinId}`) from an integer id.
-"""
-PinId(value::Integer) = lib.ax_NodeEditor_PinId(value)
-
-"""
-    value(id::Ptr{PinId})
-
-Return the integer id backing a `PinId` handle.
-"""
-value(id::Ptr{PinId}) = lib.ax_NodeEditor_PinId_value(id)
-
-"""
-Destructor for `PinId`.
-"""
-Destroy(id::Ptr{PinId}) = lib.ax_NodeEditor_PinId_destroy(id)
-
-"""
-    LinkId(value::Integer)
-
-Construct an opaque `LinkId` handle (a `Ptr{LinkId}`) from an integer id.
-"""
-LinkId(value::Integer) = lib.ax_NodeEditor_LinkId(value)
-
-"""
-    value(id::Ptr{LinkId})
-
-Return the integer id backing a `LinkId` handle.
-"""
-value(id::Ptr{LinkId}) = lib.ax_NodeEditor_LinkId_value(id)
-
-"""
-Destructor for `LinkId`.
-"""
-Destroy(id::Ptr{LinkId}) = lib.ax_NodeEditor_LinkId_destroy(id)
-
-"""
 $(TYPEDSIGNATURES)
+
+The returned `Config` is heap-allocated, it must be freed with [`Destroy`](@ref).
 
 [Upstream link](https://github.com/thedmd/imgui-node-editor/blob/master/imgui_node_editor.h#L111).
 """
@@ -260,14 +207,14 @@ $(TYPEDSIGNATURES)
 
 [Upstream link](https://github.com/thedmd/imgui-node-editor/blob/master/imgui_node_editor.h#L309).
 """
-BeginNode(id::Ptr{NodeId}) = lib.ax_NodeEditor_BeginNode(id)
+BeginNode(id::NodeId) = lib.ax_NodeEditor_BeginNode(id)
 
 """
 $(TYPEDSIGNATURES)
 
 [Upstream link](https://github.com/thedmd/imgui-node-editor/blob/master/imgui_node_editor.h#L310).
 """
-BeginPin(id::Ptr{PinId}, kind) = lib.ax_NodeEditor_BeginPin(id, kind)
+BeginPin(id::PinId, kind) = lib.ax_NodeEditor_BeginPin(id, kind)
 
 """
 $(TYPEDSIGNATURES)
@@ -330,7 +277,7 @@ $(TYPEDSIGNATURES)
 
 [Upstream link](https://github.com/thedmd/imgui-node-editor/blob/master/imgui_node_editor.h#L320).
 """
-BeginGroupHint(nodeId::Ptr{NodeId}) = lib.ax_NodeEditor_BeginGroupHint(nodeId)
+BeginGroupHint(nodeId::NodeId) = lib.ax_NodeEditor_BeginGroupHint(nodeId)
 
 """
 $(TYPEDSIGNATURES)
@@ -372,27 +319,22 @@ $(TYPEDSIGNATURES)
 
 [Upstream link](https://github.com/thedmd/imgui-node-editor/blob/master/imgui_node_editor.h#L328).
 """
-GetNodeBackgroundDrawList(nodeId::Ptr{NodeId}) = lib.ax_NodeEditor_GetNodeBackgroundDrawList(nodeId)
+GetNodeBackgroundDrawList(nodeId::NodeId) = lib.ax_NodeEditor_GetNodeBackgroundDrawList(nodeId)
 
 """
 $(TYPEDSIGNATURES)
 
 [Upstream link](https://github.com/thedmd/imgui-node-editor/blob/master/imgui_node_editor.h#L330).
 """
-Link(
-    id,
-    startPinId::Ptr{PinId},
-    endPinId::Ptr{PinId},
-    color::Union{ImVec4,NTuple{4}} = ImVec4(1, 1, 1, 1),
-    thickness = 1.0f0,
-) = lib.ax_NodeEditor_Link(id, startPinId, endPinId, color, thickness)
+Link(id, startPinId::PinId, endPinId::PinId, color::Union{ImVec4,NTuple{4}} = ImVec4(1, 1, 1, 1), thickness = 1.0f0) =
+    lib.ax_NodeEditor_Link(id, startPinId, endPinId, color, thickness)
 
 """
 $(TYPEDSIGNATURES)
 
 [Upstream link](https://github.com/thedmd/imgui-node-editor/blob/master/imgui_node_editor.h#L332).
 """
-Flow(linkId, direction = FlowDirection::Forward) = lib.ax_NodeEditor_Flow(linkId, direction)
+Flow(linkId, direction = FlowDirection_Forward) = lib.ax_NodeEditor_Flow(linkId, direction)
 
 """
 $(TYPEDSIGNATURES)
@@ -407,29 +349,34 @@ $(TYPEDSIGNATURES)
 
 [Upstream link](https://github.com/thedmd/imgui-node-editor/blob/master/imgui_node_editor.h#L335).
 """
-QueryNewLink(startId::Ptr{PinId}, endId::Ptr{PinId}) = lib.ax_NodeEditor_QueryNewLink_Nil(startId, endId)
+QueryNewLink(startId::VoidablePtrOrRef{PinId}, endId::VoidablePtrOrRef{PinId}) =
+    lib.ax_NodeEditor_QueryNewLink_Nil(startId, endId)
 
 """
 $(TYPEDSIGNATURES)
 
 [Upstream link](https://github.com/thedmd/imgui-node-editor/blob/master/imgui_node_editor.h#L336).
 """
-QueryNewLink(startId::Ptr{PinId}, endId::Ptr{PinId}, color::Union{ImVec4,NTuple{4}}, thickness::Real = 1.0f0) =
-    lib.ax_NodeEditor_QueryNewLink_Vec4(startId, endId, color, thickness)
+QueryNewLink(
+    startId::VoidablePtrOrRef{PinId},
+    endId::VoidablePtrOrRef{PinId},
+    color::Union{ImVec4,NTuple{4}},
+    thickness::Real = 1.0f0,
+) = lib.ax_NodeEditor_QueryNewLink_Vec4(startId, endId, color, thickness)
 
 """
 $(TYPEDSIGNATURES)
 
 [Upstream link](https://github.com/thedmd/imgui-node-editor/blob/master/imgui_node_editor.h#L337).
 """
-QueryNewNode(pinId::Ptr{PinId}) = lib.ax_NodeEditor_QueryNewNode_Nil(pinId)
+QueryNewNode(pinId::VoidablePtrOrRef{PinId}) = lib.ax_NodeEditor_QueryNewNode_Nil(pinId)
 
 """
 $(TYPEDSIGNATURES)
 
 [Upstream link](https://github.com/thedmd/imgui-node-editor/blob/master/imgui_node_editor.h#L338).
 """
-QueryNewNode(pinId::Ptr{PinId}, color::Union{ImVec4,NTuple{4}}, thickness::Real = 1.0f0) =
+QueryNewNode(pinId::VoidablePtrOrRef{PinId}, color::Union{ImVec4,NTuple{4}}, thickness::Real = 1.0f0) =
     lib.ax_NodeEditor_QueryNewNode_Vec4(pinId, color, thickness)
 
 """
@@ -481,15 +428,18 @@ $(TYPEDSIGNATURES)
 
 [Upstream link](https://github.com/thedmd/imgui-node-editor/blob/master/imgui_node_editor.h#L346).
 """
-QueryDeletedLink(linkId, startId::Ptr{PinId} = Ptr{PinId}(C_NULL), endId::Ptr{PinId} = Ptr{PinId}(C_NULL)) =
-    lib.ax_NodeEditor_QueryDeletedLink(linkId, startId, endId)
+QueryDeletedLink(
+    linkId::VoidablePtrOrRef{LinkId},
+    startId::VoidablePtrOrRef{PinId} = C_NULL,
+    endId::VoidablePtrOrRef{PinId} = C_NULL,
+) = lib.ax_NodeEditor_QueryDeletedLink(linkId, startId, endId)
 
 """
 $(TYPEDSIGNATURES)
 
 [Upstream link](https://github.com/thedmd/imgui-node-editor/blob/master/imgui_node_editor.h#L347).
 """
-QueryDeletedNode(nodeId::Ptr{NodeId}) = lib.ax_NodeEditor_QueryDeletedNode(nodeId)
+QueryDeletedNode(nodeId::VoidablePtrOrRef{NodeId}) = lib.ax_NodeEditor_QueryDeletedNode(nodeId)
 
 """
 $(TYPEDSIGNATURES)
@@ -517,7 +467,7 @@ $(TYPEDSIGNATURES)
 
 [Upstream link](https://github.com/thedmd/imgui-node-editor/blob/master/imgui_node_editor.h#L352).
 """
-SetNodePosition(nodeId::Ptr{NodeId}, editorPosition::Union{ImVec2,NTuple{2}}) =
+SetNodePosition(nodeId::NodeId, editorPosition::Union{ImVec2,NTuple{2}}) =
     lib.ax_NodeEditor_SetNodePosition(nodeId, editorPosition)
 
 """
@@ -525,49 +475,49 @@ $(TYPEDSIGNATURES)
 
 [Upstream link](https://github.com/thedmd/imgui-node-editor/blob/master/imgui_node_editor.h#L353).
 """
-SetGroupSize(nodeId::Ptr{NodeId}, size::Union{ImVec2,NTuple{2}}) = lib.ax_NodeEditor_SetGroupSize(nodeId, size)
+SetGroupSize(nodeId::NodeId, size::Union{ImVec2,NTuple{2}}) = lib.ax_NodeEditor_SetGroupSize(nodeId, size)
 
 """
 $(TYPEDSIGNATURES)
 
 [Upstream link](https://github.com/thedmd/imgui-node-editor/blob/master/imgui_node_editor.h#L354).
 """
-GetNodePosition(nodeId::Ptr{NodeId}) = lib.ax_NodeEditor_GetNodePosition(nodeId)
+GetNodePosition(nodeId::NodeId) = lib.ax_NodeEditor_GetNodePosition(nodeId)
 
 """
 $(TYPEDSIGNATURES)
 
 [Upstream link](https://github.com/thedmd/imgui-node-editor/blob/master/imgui_node_editor.h#L355).
 """
-GetNodeSize(nodeId::Ptr{NodeId}) = lib.ax_NodeEditor_GetNodeSize(nodeId)
+GetNodeSize(nodeId::NodeId) = lib.ax_NodeEditor_GetNodeSize(nodeId)
 
 """
 $(TYPEDSIGNATURES)
 
 [Upstream link](https://github.com/thedmd/imgui-node-editor/blob/master/imgui_node_editor.h#L356).
 """
-CenterNodeOnScreen(nodeId::Ptr{NodeId}) = lib.ax_NodeEditor_CenterNodeOnScreen(nodeId)
+CenterNodeOnScreen(nodeId::NodeId) = lib.ax_NodeEditor_CenterNodeOnScreen(nodeId)
 
 """
 $(TYPEDSIGNATURES)
 
 [Upstream link](https://github.com/thedmd/imgui-node-editor/blob/master/imgui_node_editor.h#L357).
 """
-SetNodeZPosition(nodeId::Ptr{NodeId}, z) = lib.ax_NodeEditor_SetNodeZPosition(nodeId, z)
+SetNodeZPosition(nodeId::NodeId, z) = lib.ax_NodeEditor_SetNodeZPosition(nodeId, z)
 
 """
 $(TYPEDSIGNATURES)
 
 [Upstream link](https://github.com/thedmd/imgui-node-editor/blob/master/imgui_node_editor.h#L358).
 """
-GetNodeZPosition(nodeId::Ptr{NodeId}) = lib.ax_NodeEditor_GetNodeZPosition(nodeId)
+GetNodeZPosition(nodeId::NodeId) = lib.ax_NodeEditor_GetNodeZPosition(nodeId)
 
 """
 $(TYPEDSIGNATURES)
 
 [Upstream link](https://github.com/thedmd/imgui-node-editor/blob/master/imgui_node_editor.h#L360).
 """
-RestoreNodeState(nodeId::Ptr{NodeId}) = lib.ax_NodeEditor_RestoreNodeState(nodeId)
+RestoreNodeState(nodeId::NodeId) = lib.ax_NodeEditor_RestoreNodeState(nodeId)
 
 """
 $(TYPEDSIGNATURES)
@@ -615,22 +565,48 @@ GetSelectedObjectCount() = lib.ax_NodeEditor_GetSelectedObjectCount()
 $(TYPEDSIGNATURES)
 
 [Upstream link](https://github.com/thedmd/imgui-node-editor/blob/master/imgui_node_editor.h#L370).
+
+`ids` is resized to fit and returned.
 """
-GetSelectedNodes(nodes::Ptr{NodeId}, size) = lib.ax_NodeEditor_GetSelectedNodes(nodes, size)
+function GetSelectedNodes!(ids::Vector{NodeId})
+    resize!(ids, lib.ax_NodeEditor_GetSelectedNodes(C_NULL, 0))
+    lib.ax_NodeEditor_GetSelectedNodes(ids, length(ids))
+    return ids
+end
+
+"""
+$(TYPEDSIGNATURES)
+
+Allocating variant of [`GetSelectedNodes!`](@ref).
+"""
+GetSelectedNodes() = GetSelectedNodes!(NodeId[])
 
 """
 $(TYPEDSIGNATURES)
 
 [Upstream link](https://github.com/thedmd/imgui-node-editor/blob/master/imgui_node_editor.h#L371).
+
+`ids` is resized to fit and returned.
 """
-GetSelectedLinks(links, size) = lib.ax_NodeEditor_GetSelectedLinks(links, size)
+function GetSelectedLinks!(ids::Vector{LinkId})
+    resize!(ids, lib.ax_NodeEditor_GetSelectedLinks(C_NULL, 0))
+    lib.ax_NodeEditor_GetSelectedLinks(ids, length(ids))
+    return ids
+end
+
+"""
+$(TYPEDSIGNATURES)
+
+Allocating variant of [`GetSelectedLinks!`](@ref).
+"""
+GetSelectedLinks() = GetSelectedLinks!(LinkId[])
 
 """
 $(TYPEDSIGNATURES)
 
 [Upstream link](https://github.com/thedmd/imgui-node-editor/blob/master/imgui_node_editor.h#L372).
 """
-IsNodeSelected(nodeId::Ptr{NodeId}) = lib.ax_NodeEditor_IsNodeSelected(nodeId)
+IsNodeSelected(nodeId::NodeId) = lib.ax_NodeEditor_IsNodeSelected(nodeId)
 
 """
 $(TYPEDSIGNATURES)
@@ -651,7 +627,7 @@ $(TYPEDSIGNATURES)
 
 [Upstream link](https://github.com/thedmd/imgui-node-editor/blob/master/imgui_node_editor.h#L375).
 """
-SelectNode(nodeId::Ptr{NodeId}, append = false) = lib.ax_NodeEditor_SelectNode(nodeId, append)
+SelectNode(nodeId::NodeId, append = false) = lib.ax_NodeEditor_SelectNode(nodeId, append)
 
 """
 $(TYPEDSIGNATURES)
@@ -665,7 +641,7 @@ $(TYPEDSIGNATURES)
 
 [Upstream link](https://github.com/thedmd/imgui-node-editor/blob/master/imgui_node_editor.h#L377).
 """
-DeselectNode(nodeId::Ptr{NodeId}) = lib.ax_NodeEditor_DeselectNode(nodeId)
+DeselectNode(nodeId::NodeId) = lib.ax_NodeEditor_DeselectNode(nodeId)
 
 """
 $(TYPEDSIGNATURES)
@@ -679,7 +655,7 @@ $(TYPEDSIGNATURES)
 
 [Upstream link](https://github.com/thedmd/imgui-node-editor/blob/master/imgui_node_editor.h#L380).
 """
-DeleteNode(nodeId::Ptr{NodeId}) = lib.ax_NodeEditor_DeleteNode(nodeId)
+DeleteNode(nodeId::NodeId) = lib.ax_NodeEditor_DeleteNode(nodeId)
 
 """
 $(TYPEDSIGNATURES)
@@ -693,28 +669,28 @@ $(TYPEDSIGNATURES)
 
 [Upstream link](https://github.com/thedmd/imgui-node-editor/blob/master/imgui_node_editor.h#L383).
 """
-HasAnyLinks(nodeId::Ptr{NodeId}) = lib.ax_NodeEditor_HasAnyLinks_NodeId(nodeId)
+HasAnyLinks(nodeId::NodeId) = lib.ax_NodeEditor_HasAnyLinks_NodeId(nodeId)
 
 """
 $(TYPEDSIGNATURES)
 
 [Upstream link](https://github.com/thedmd/imgui-node-editor/blob/master/imgui_node_editor.h#L384).
 """
-HasAnyLinks(pinId::Ptr{PinId}) = lib.ax_NodeEditor_HasAnyLinks_PinId(pinId)
+HasAnyLinks(pinId::PinId) = lib.ax_NodeEditor_HasAnyLinks_PinId(pinId)
 
 """
 $(TYPEDSIGNATURES)
 
 [Upstream link](https://github.com/thedmd/imgui-node-editor/blob/master/imgui_node_editor.h#L385).
 """
-BreakLinks(nodeId::Ptr{NodeId}) = lib.ax_NodeEditor_BreakLinks_NodeId(nodeId)
+BreakLinks(nodeId::NodeId) = lib.ax_NodeEditor_BreakLinks_NodeId(nodeId)
 
 """
 $(TYPEDSIGNATURES)
 
 [Upstream link](https://github.com/thedmd/imgui-node-editor/blob/master/imgui_node_editor.h#L386).
 """
-BreakLinks(pinId::Ptr{PinId}) = lib.ax_NodeEditor_BreakLinks_PinId(pinId)
+BreakLinks(pinId::PinId) = lib.ax_NodeEditor_BreakLinks_PinId(pinId)
 
 """
 $(TYPEDSIGNATURES)
@@ -735,21 +711,21 @@ $(TYPEDSIGNATURES)
 
 [Upstream link](https://github.com/thedmd/imgui-node-editor/blob/master/imgui_node_editor.h#L391).
 """
-ShowNodeContextMenu(nodeId::Ptr{NodeId}) = lib.ax_NodeEditor_ShowNodeContextMenu(nodeId)
+ShowNodeContextMenu(nodeId::VoidablePtrOrRef{NodeId}) = lib.ax_NodeEditor_ShowNodeContextMenu(nodeId)
 
 """
 $(TYPEDSIGNATURES)
 
 [Upstream link](https://github.com/thedmd/imgui-node-editor/blob/master/imgui_node_editor.h#L392).
 """
-ShowPinContextMenu(pinId::Ptr{PinId}) = lib.ax_NodeEditor_ShowPinContextMenu(pinId)
+ShowPinContextMenu(pinId::VoidablePtrOrRef{PinId}) = lib.ax_NodeEditor_ShowPinContextMenu(pinId)
 
 """
 $(TYPEDSIGNATURES)
 
 [Upstream link](https://github.com/thedmd/imgui-node-editor/blob/master/imgui_node_editor.h#L393).
 """
-ShowLinkContextMenu(linkId) = lib.ax_NodeEditor_ShowLinkContextMenu(linkId)
+ShowLinkContextMenu(linkId::VoidablePtrOrRef{LinkId}) = lib.ax_NodeEditor_ShowLinkContextMenu(linkId)
 
 """
 $(TYPEDSIGNATURES)
@@ -825,15 +801,41 @@ GetActionContextSize() = lib.ax_NodeEditor_GetActionContextSize()
 $(TYPEDSIGNATURES)
 
 [Upstream link](https://github.com/thedmd/imgui-node-editor/blob/master/imgui_node_editor.h#L406).
+
+`ids` is resized to fit and returned.
 """
-GetActionContextNodes(nodes::Ptr{NodeId}, size) = lib.ax_NodeEditor_GetActionContextNodes(nodes, size)
+function GetActionContextNodes!(ids::Vector{NodeId})
+    resize!(ids, lib.ax_NodeEditor_GetActionContextNodes(C_NULL, 0))
+    lib.ax_NodeEditor_GetActionContextNodes(ids, length(ids))
+    return ids
+end
+
+"""
+$(TYPEDSIGNATURES)
+
+Allocating variant of [`GetActionContextNodes!`](@ref).
+"""
+GetActionContextNodes() = GetActionContextNodes!(NodeId[])
 
 """
 $(TYPEDSIGNATURES)
 
 [Upstream link](https://github.com/thedmd/imgui-node-editor/blob/master/imgui_node_editor.h#L407).
+
+`ids` is resized to fit and returned.
 """
-GetActionContextLinks(links, size) = lib.ax_NodeEditor_GetActionContextLinks(links, size)
+function GetActionContextLinks!(ids::Vector{LinkId})
+    resize!(ids, lib.ax_NodeEditor_GetActionContextLinks(C_NULL, 0))
+    lib.ax_NodeEditor_GetActionContextLinks(ids, length(ids))
+    return ids
+end
+
+"""
+$(TYPEDSIGNATURES)
+
+Allocating variant of [`GetActionContextLinks!`](@ref).
+"""
+GetActionContextLinks() = GetActionContextLinks!(LinkId[])
 
 """
 $(TYPEDSIGNATURES)
@@ -924,7 +926,7 @@ $(TYPEDSIGNATURES)
 
 [Upstream link](https://github.com/thedmd/imgui-node-editor/blob/master/imgui_node_editor.h#L423).
 """
-GetLinkPins(linkId, startPinId::Ptr{PinId}, endPinId::Ptr{PinId}) =
+GetLinkPins(linkId, startPinId::VoidablePtrOrRef{PinId}, endPinId::VoidablePtrOrRef{PinId}) =
     lib.ax_NodeEditor_GetLinkPins(linkId, startPinId, endPinId)
 
 """
@@ -932,7 +934,7 @@ $(TYPEDSIGNATURES)
 
 [Upstream link](https://github.com/thedmd/imgui-node-editor/blob/master/imgui_node_editor.h#L425).
 """
-PinHadAnyLinks(pinId::Ptr{PinId}) = lib.ax_NodeEditor_PinHadAnyLinks(pinId)
+PinHadAnyLinks(pinId::PinId) = lib.ax_NodeEditor_PinHadAnyLinks(pinId)
 
 """
 $(TYPEDSIGNATURES)
@@ -966,13 +968,56 @@ GetNodeCount() = lib.ax_NodeEditor_GetNodeCount()
 $(TYPEDSIGNATURES)
 
 [Upstream link](https://github.com/thedmd/imgui-node-editor/blob/master/imgui_node_editor.h#L432).
+
+`ids` is resized to fit and returned.
 """
-GetOrderedNodeIds(nodes::Ptr{NodeId}, size) = lib.ax_NodeEditor_GetOrderedNodeIds(nodes, size)
+function GetOrderedNodeIds!(ids::Vector{NodeId})
+    resize!(ids, lib.ax_NodeEditor_GetNodeCount())
+    lib.ax_NodeEditor_GetOrderedNodeIds(ids, length(ids))
+    return ids
+end
+
+"""
+$(TYPEDSIGNATURES)
+
+Allocating variant of [`GetOrderedNodeIds!`](@ref).
+"""
+GetOrderedNodeIds() = GetOrderedNodeIds!(NodeId[])
+
+"""
+$(TYPEDSIGNATURES)
+"""
+lib.NodeId(val::Integer) = lib.ax_NodeEditor_NodeId(val)
+
+"""
+$(TYPEDSIGNATURES)
+"""
+lib.PinId(val::Integer) = lib.ax_NodeEditor_PinId(val)
+
+"""
+$(TYPEDSIGNATURES)
+"""
+lib.LinkId(val::Integer) = lib.ax_NodeEditor_LinkId(val)
+
+"""
+$(TYPEDSIGNATURES)
+"""
+Value(self::NodeId) = lib.ax_NodeEditor_NodeId_value(self)
+
+"""
+$(TYPEDSIGNATURES)
+"""
+Value(self::PinId) = lib.ax_NodeEditor_PinId_value(self)
+
+"""
+$(TYPEDSIGNATURES)
+"""
+Value(self::LinkId) = lib.ax_NodeEditor_LinkId_value(self)
 
 @static if VERSION >= v"1.11"
     eval(
         Meta.parse(
-            "public Destroy, SetCurrentEditor, GetCurrentEditor, CreateEditor, DestroyEditor, GetConfig, GetStyle, GetStyleColorName, PushStyleColor, PopStyleColor, PushStyleVar, PopStyleVar, Begin, End, BeginNode, BeginPin, PinRect, PinPivotRect, PinPivotSize, PinPivotScale, PinPivotAlignment, EndPin, Group, EndNode, BeginGroupHint, GetGroupMin, GetGroupMax, GetHintForegroundDrawList, GetHintBackgroundDrawList, EndGroupHint, GetNodeBackgroundDrawList, Link, Flow, BeginCreate, QueryNewLink, QueryNewNode, AcceptNewItem, RejectNewItem, EndCreate, BeginDelete, QueryDeletedLink, QueryDeletedNode, AcceptDeletedItem, RejectDeletedItem, EndDelete, SetNodePosition, SetGroupSize, GetNodePosition, GetNodeSize, CenterNodeOnScreen, SetNodeZPosition, GetNodeZPosition, RestoreNodeState, Suspend, Resume, IsSuspended, IsActive, HasSelectionChanged, GetSelectedObjectCount, GetSelectedNodes, GetSelectedLinks, IsNodeSelected, IsLinkSelected, ClearSelection, SelectNode, SelectLink, DeselectNode, DeselectLink, DeleteNode, DeleteLink, HasAnyLinks, BreakLinks, NavigateToContent, NavigateToSelection, ShowNodeContextMenu, ShowPinContextMenu, ShowLinkContextMenu, ShowBackgroundContextMenu, EnableShortcuts, AreShortcutsEnabled, BeginShortcut, AcceptCut, AcceptCopy, AcceptPaste, AcceptDuplicate, AcceptCreateNode, GetActionContextSize, GetActionContextNodes, GetActionContextLinks, EndShortcut, GetCurrentZoom, GetHoveredNode, GetHoveredPin, GetHoveredLink, GetDoubleClickedNode, GetDoubleClickedPin, GetDoubleClickedLink, IsBackgroundClicked, IsBackgroundDoubleClicked, GetBackgroundClickButtonIndex, GetBackgroundDoubleClickButtonIndex, GetLinkPins, PinHadAnyLinks, GetScreenSize, ScreenToCanvas, CanvasToScreen, GetNodeCount, GetOrderedNodeIds, NodeId, value, PinId, LinkId",
+            "public Destroy, SetCurrentEditor, GetCurrentEditor, CreateEditor, DestroyEditor, GetConfig, GetStyle, GetStyleColorName, PushStyleColor, PopStyleColor, PushStyleVar, PopStyleVar, Begin, End, BeginNode, BeginPin, PinRect, PinPivotRect, PinPivotSize, PinPivotScale, PinPivotAlignment, EndPin, Group, EndNode, BeginGroupHint, GetGroupMin, GetGroupMax, GetHintForegroundDrawList, GetHintBackgroundDrawList, EndGroupHint, GetNodeBackgroundDrawList, Link, Flow, BeginCreate, QueryNewLink, QueryNewNode, AcceptNewItem, RejectNewItem, EndCreate, BeginDelete, QueryDeletedLink, QueryDeletedNode, AcceptDeletedItem, RejectDeletedItem, EndDelete, SetNodePosition, SetGroupSize, GetNodePosition, GetNodeSize, CenterNodeOnScreen, SetNodeZPosition, GetNodeZPosition, RestoreNodeState, Suspend, Resume, IsSuspended, IsActive, HasSelectionChanged, GetSelectedObjectCount, GetSelectedNodes!, GetSelectedNodes, GetSelectedLinks!, GetSelectedLinks, IsNodeSelected, IsLinkSelected, ClearSelection, SelectNode, SelectLink, DeselectNode, DeselectLink, DeleteNode, DeleteLink, HasAnyLinks, BreakLinks, NavigateToContent, NavigateToSelection, ShowNodeContextMenu, ShowPinContextMenu, ShowLinkContextMenu, ShowBackgroundContextMenu, EnableShortcuts, AreShortcutsEnabled, BeginShortcut, AcceptCut, AcceptCopy, AcceptPaste, AcceptDuplicate, AcceptCreateNode, GetActionContextSize, GetActionContextNodes!, GetActionContextNodes, GetActionContextLinks!, GetActionContextLinks, EndShortcut, GetCurrentZoom, GetHoveredNode, GetHoveredPin, GetHoveredLink, GetDoubleClickedNode, GetDoubleClickedPin, GetDoubleClickedLink, IsBackgroundClicked, IsBackgroundDoubleClicked, GetBackgroundClickButtonIndex, GetBackgroundDoubleClickButtonIndex, GetLinkPins, PinHadAnyLinks, GetScreenSize, ScreenToCanvas, CanvasToScreen, GetNodeCount, GetOrderedNodeIds!, GetOrderedNodeIds, Value",
         ),
     )
 end

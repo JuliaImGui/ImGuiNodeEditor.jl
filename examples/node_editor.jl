@@ -4,17 +4,16 @@ import GLFW, ModernGL
 
 ig.set_backend(:GlfwOpenGL3)
 
-# A live link between two pins. Each link carries its own id alongside the input
-# and output pins it connects.
-mutable struct LinkInfo
-    id::Ptr{ne.LinkId}
-    input::Ptr{ne.PinId}
-    output::Ptr{ne.PinId}
+# A live link between two pins. The id types are plain values, so there's nothing
+# to free.
+struct LinkInfo
+    id::ne.LinkId
+    input::ne.PinId
+    output::ne.PinId
 end
 
-# Dear ImGui's built-in default is a fixed-resolution *bitmap* font, so the node
-# editor's zoom can only point-upscale it (blocky text). The vector default is a
-# TTF that the dynamic font system can re-bake crisply at any zoom.
+# The default bitmap font can only be point-upscaled by the zoom (blocky text),
+# whereas the vector default can be re-baked crisply at any size.
 function load_font!()
     io = ig.GetIO()
     atlas = unsafe_load(io.Fonts)
@@ -34,13 +33,52 @@ function pin_row(in_pin, out_pin)
     ne.EndPin()
 end
 
-function node_editor(; engine=nothing)
+# A point on a node's title, in main-viewport coordinates (what the test engine's
+# mouse functions take). Clicking a pin doesn't select the node, hence the title
+# rather than the centre. The canvas draws in its own local space, so node
+# coordinates have to be converted before they mean anything on screen.
+function node_title_pos(node)
+    pos = ne.GetNodePosition(node)
+    size = ne.GetNodeSize(node)
+    title = ne.CanvasToScreen(ig.ImVec2(pos.x + size.x / 2, pos.y + size.y / 4))
+    viewport_pos = unsafe_load(ig.GetMainViewport().Pos)
+    return ig.ImVec2(title.x - viewport_pos.x, title.y - viewport_pos.y)
+end
+
+# QueryNewLink()/QueryDeletedLink() write their results through pointers, so
+# they're called with a scratch buffer that's kept alive across the ccall.
+function query_new_link(pin_buf)
+    found = GC.@preserve pin_buf ne.QueryNewLink(pointer(pin_buf, 1), pointer(pin_buf, 2))
+    return (found, pin_buf[1], pin_buf[2])
+end
+
+function query_deleted_link(link_buf)
+    found = GC.@preserve link_buf ne.QueryDeletedLink(pointer(link_buf, 1))
+    return (found, link_buf[1])
+end
+
+"""
+    node_editor(; engine=nothing, save_settings=true, links=LinkInfo[],
+                node_titles=Dict{UInt, ig.ImVec2}(), selected=ne.NodeId[])
+
+The keyword arguments beyond `engine` are only passed explicitly by the test
+suite: `save_settings=false` keeps the run reproducible by not persisting the
+node positions and view to `NodeEditor.json`, and `links`, `node_titles` and
+`selected` expose the editor state that the tests assert on.
+"""
+function node_editor(; engine=nothing, save_settings=true, links=LinkInfo[],
+                     node_titles=Dict{UInt, ig.ImVec2}(), selected=ne.NodeId[])
     ctx = ig.CreateContext()
     load_font!()
     editor = ne.CreateEditor()
 
-    # Opaque id handles are created once and reused every frame. Node A uses ids
-    # 1-3, node B uses 4-6.
+    if !save_settings
+        config = ne.GetConfig(editor)
+        unsafe_store!(config.SettingsFile, C_NULL)
+    end
+
+    # Ids are just wrappers around an integer. Node A uses ids 1-3, node B uses
+    # ids 4-6.
     nodeA = ne.NodeId(1)
     a_in = ne.PinId(2)
     a_out = ne.PinId(3)
@@ -48,18 +86,16 @@ function node_editor(; engine=nothing)
     b_in = ne.PinId(5)
     b_out = ne.PinId(6)
 
-    links = LinkInfo[]
     next_link_id = Ref(100)
     first_frame = Ref(true)
 
-    # Scratch handles that QueryNewLink / QueryDeletedLink write the dragged pin
+    # Scratch buffers that QueryNewLink / QueryDeletedLink write the dragged pin
     # and deleted link ids into each frame.
-    new_start = ne.PinId(0)
-    new_end = ne.PinId(0)
-    deleted_link = ne.LinkId(0)
+    pin_buf = Vector{ne.PinId}(undef, 2)
+    link_buf = Vector{ne.LinkId}(undef, 1)
 
-    ig.render(ctx; window_title="ImGuiNodeEditor Demo", engine,
-              on_exit=() -> ne.DestroyEditor(editor)) do
+    on_exit = () -> ne.DestroyEditor(editor)
+    ig.render(ctx; window_title="ImGuiNodeEditor Demo", engine, on_exit) do
         # Make the window fill the whole GLFW window so the node editor canvas
         # has room to work with.
         viewport = ig.GetMainViewport()
@@ -70,20 +106,14 @@ function node_editor(; engine=nothing)
         ne.SetCurrentEditor(editor)
         ne.Begin("My Editor")
 
-        # The editor zooms by scaling the canvas draw list, which upscales text
-        # baked at the base font size and makes it blurry. Dear ImGui 1.92's
-        # dynamic font system can re-bake glyphs at a higher pixel density, so
-        # match the rasterizer density to the magnification to keep text crisp.
+        # The editor zooms by scaling the canvas draw list, which blurs text baked
+        # at the base font size, so match the rasterizer density to the
+        # magnification (the reciprocal of GetCurrentZoom(), which returns the
+        # view's InvScale).
         #
-        # GetCurrentZoom() returns the view's InvScale, so the magnification
-        # factor is its reciprocal.
-        #
-        # Snap the density up to the next power of two. A new density value bakes
-        # a fresh font atlas entry and re-rasterizes every visible glyph, so
-        # using the continuous magnification would re-bake almost every frame
-        # while zooming. Quantizing keeps the bake cache warm (a handful of
-        # distinct densities) at the cost of slightly over-baking; rounding up
-        # rather than down keeps text at least as sharp as the magnification.
+        # Snapping up to a power of two keeps the bake cache warm: each new density
+        # re-rasterizes every visible glyph, so the continuous magnification would
+        # re-bake almost every frame while zooming.
         zoom = ne.GetCurrentZoom()
         magnification = zoom > 0 ? 1.0f0 / zoom : 1.0f0
         density = exp2(ceil(log2(max(magnification, 1.0f0))))
@@ -105,6 +135,10 @@ function node_editor(; engine=nothing)
         pin_row(b_in, b_out)
         ne.EndNode()
 
+        node_titles[nodeA.value] = node_title_pos(nodeA)
+        node_titles[nodeB.value] = node_title_pos(nodeB)
+        ne.GetSelectedNodes!(selected)
+
         # Draw the links that already exist.
         for link in links
             ne.Link(link.id, link.input, link.output)
@@ -112,27 +146,25 @@ function node_editor(; engine=nothing)
 
         # Handle the user dragging out a new link between two pins.
         if ne.BeginCreate()
-            if ne.QueryNewLink(new_start, new_end)
-                start_val = ne.value(new_start)
-                end_val = ne.value(new_end)
-                # Both pins are valid only once the drag hovers a second pin;
-                # AcceptNewItem() returns true on mouse release.
-                if start_val != 0 && end_val != 0 && ne.AcceptNewItem()
-                    push!(links, LinkInfo(ne.LinkId(next_link_id[]),
-                                          ne.PinId(start_val),
-                                          ne.PinId(end_val)))
-                    next_link_id[] += 1
-                end
+            dragging, new_start, new_end = query_new_link(pin_buf)
+            # Both pins are valid only once the drag hovers a second pin;
+            # AcceptNewItem() returns true on mouse release.
+            if dragging && new_start.value != 0 && new_end.value != 0 && ne.AcceptNewItem()
+                push!(links, LinkInfo(ne.LinkId(next_link_id[]), new_start, new_end))
+                next_link_id[] += 1
             end
         end
         ne.EndCreate()
 
         # Handle links the user deletes (select a link and press Delete).
         if ne.BeginDelete()
-            while ne.QueryDeletedLink(deleted_link)
+            while true
+                found, deleted_link = query_deleted_link(link_buf)
+                if !found
+                    break
+                end
                 if ne.AcceptDeletedItem()
-                    dv = ne.value(deleted_link)
-                    filter!(l -> ne.value(l.id) != dv, links)
+                    filter!(l -> l.id.value != deleted_link.value, links)
                 end
             end
         end

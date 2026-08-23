@@ -7,11 +7,23 @@ using cimnodes_editor_jll: libcimnodes_editor
 using CImGui: ImVec2, ImVec4, ImVector_float, ImDrawList, ImGuiMouseButton
 
 
-mutable struct NodeId end
+struct LinkId
+    value::Csize_t
+end
 
-mutable struct LinkId end
+const LinkId = LinkId
 
-mutable struct PinId end
+struct NodeId
+    value::Csize_t
+end
+
+const NodeId = NodeId
+
+struct PinId
+    value::Csize_t
+end
+
+const PinId = PinId
 
 mutable struct EditorContext end
 
@@ -223,512 +235,496 @@ function Base.setproperty!(x::Ptr{cimnodes_editor_Style}, f::Symbol, v)
 end
 
 
-mutable struct SafeType end
-
-mutable struct SafePointerType end
-
 function ax_NodeEditor_Config_Config_Config()
-    ccall((:ax_NodeEditor_Config_Config_Config, libcimnodes_editor), Ptr{Config}, ())
+    @ccall libcimnodes_editor.ax_NodeEditor_Config_Config_Config()::Ptr{Config}
 end
 
 function Config_destroy(self)
-    ccall((:Config_destroy, libcimnodes_editor), Cvoid, (Ptr{Config},), self)
+    @ccall libcimnodes_editor.Config_destroy(self::Ptr{Config})::Cvoid
 end
 
 function ax_NodeEditor_SetCurrentEditor(ctx)
-    ccall((:ax_NodeEditor_SetCurrentEditor, libcimnodes_editor), Cvoid, (Ptr{EditorContext},), ctx)
+    @ccall libcimnodes_editor.ax_NodeEditor_SetCurrentEditor(ctx::Ptr{EditorContext})::Cvoid
 end
 
 function ax_NodeEditor_GetCurrentEditor()
-    ccall((:ax_NodeEditor_GetCurrentEditor, libcimnodes_editor), Ptr{EditorContext}, ())
+    @ccall libcimnodes_editor.ax_NodeEditor_GetCurrentEditor()::Ptr{EditorContext}
 end
 
 function ax_NodeEditor_CreateEditor(config)
-    ccall((:ax_NodeEditor_CreateEditor, libcimnodes_editor), Ptr{EditorContext}, (Ptr{Config},), config)
+    @ccall libcimnodes_editor.ax_NodeEditor_CreateEditor(config::Ptr{Config})::Ptr{EditorContext}
 end
 
 function ax_NodeEditor_DestroyEditor(ctx)
-    ccall((:ax_NodeEditor_DestroyEditor, libcimnodes_editor), Cvoid, (Ptr{EditorContext},), ctx)
+    @ccall libcimnodes_editor.ax_NodeEditor_DestroyEditor(ctx::Ptr{EditorContext})::Cvoid
 end
 
 function ax_NodeEditor_GetConfig(ctx)
-    ccall((:ax_NodeEditor_GetConfig, libcimnodes_editor), Ptr{Config}, (Ptr{EditorContext},), ctx)
+    @ccall libcimnodes_editor.ax_NodeEditor_GetConfig(ctx::Ptr{EditorContext})::Ptr{Config}
 end
 
 function ax_NodeEditor_GetStyle()
-    ccall((:ax_NodeEditor_GetStyle, libcimnodes_editor), Ptr{cimnodes_editor_Style}, ())
+    @ccall libcimnodes_editor.ax_NodeEditor_GetStyle()::Ptr{cimnodes_editor_Style}
 end
 
 function ax_NodeEditor_GetStyleColorName(colorIndex)
-    ccall((:ax_NodeEditor_GetStyleColorName, libcimnodes_editor), Ptr{Cchar}, (StyleColor,), colorIndex)
+    @ccall libcimnodes_editor.ax_NodeEditor_GetStyleColorName(colorIndex::StyleColor)::Ptr{Cchar}
 end
 
 function ax_NodeEditor_PushStyleColor(colorIndex, color)
-    ccall((:ax_NodeEditor_PushStyleColor, libcimnodes_editor), Cvoid, (StyleColor, ImVec4), colorIndex, color)
+    @ccall libcimnodes_editor.ax_NodeEditor_PushStyleColor(colorIndex::StyleColor, color::ImVec4)::Cvoid
 end
 
 function ax_NodeEditor_PopStyleColor(count)
-    ccall((:ax_NodeEditor_PopStyleColor, libcimnodes_editor), Cvoid, (Cint,), count)
+    @ccall libcimnodes_editor.ax_NodeEditor_PopStyleColor(count::Cint)::Cvoid
 end
 
 function ax_NodeEditor_PushStyleVar_Float(varIndex, value)
-    ccall((:ax_NodeEditor_PushStyleVar_Float, libcimnodes_editor), Cvoid, (StyleVar, Cfloat), varIndex, value)
+    @ccall libcimnodes_editor.ax_NodeEditor_PushStyleVar_Float(varIndex::StyleVar, value::Cfloat)::Cvoid
 end
 
 function ax_NodeEditor_PushStyleVar_Vec2(varIndex, value)
-    ccall((:ax_NodeEditor_PushStyleVar_Vec2, libcimnodes_editor), Cvoid, (StyleVar, ImVec2), varIndex, value)
+    @ccall libcimnodes_editor.ax_NodeEditor_PushStyleVar_Vec2(varIndex::StyleVar, value::ImVec2)::Cvoid
 end
 
 function ax_NodeEditor_PushStyleVar_Vec4(varIndex, value)
-    ccall((:ax_NodeEditor_PushStyleVar_Vec4, libcimnodes_editor), Cvoid, (StyleVar, ImVec4), varIndex, value)
+    @ccall libcimnodes_editor.ax_NodeEditor_PushStyleVar_Vec4(varIndex::StyleVar, value::ImVec4)::Cvoid
 end
 
 function ax_NodeEditor_PopStyleVar(count)
-    ccall((:ax_NodeEditor_PopStyleVar, libcimnodes_editor), Cvoid, (Cint,), count)
+    @ccall libcimnodes_editor.ax_NodeEditor_PopStyleVar(count::Cint)::Cvoid
 end
 
 function ax_NodeEditor_Begin(id, size)
-    ccall((:ax_NodeEditor_Begin, libcimnodes_editor), Cvoid, (Ptr{Cchar}, ImVec2), id, size)
+    @ccall libcimnodes_editor.ax_NodeEditor_Begin(id::Ptr{Cchar}, size::ImVec2)::Cvoid
 end
 
 function ax_NodeEditor_End()
-    ccall((:ax_NodeEditor_End, libcimnodes_editor), Cvoid, ())
+    @ccall libcimnodes_editor.ax_NodeEditor_End()::Cvoid
 end
 
 function ax_NodeEditor_BeginNode(id)
-    ccall((:ax_NodeEditor_BeginNode, libcimnodes_editor), Cvoid, (Ptr{NodeId},), id)
+    @ccall libcimnodes_editor.ax_NodeEditor_BeginNode(id::NodeId)::Cvoid
 end
 
 function ax_NodeEditor_BeginPin(id, kind)
-    ccall((:ax_NodeEditor_BeginPin, libcimnodes_editor), Cvoid, (Ptr{PinId}, PinKind), id, kind)
+    @ccall libcimnodes_editor.ax_NodeEditor_BeginPin(id::PinId, kind::PinKind)::Cvoid
 end
 
 function ax_NodeEditor_PinRect(a, b)
-    ccall((:ax_NodeEditor_PinRect, libcimnodes_editor), Cvoid, (ImVec2, ImVec2), a, b)
+    @ccall libcimnodes_editor.ax_NodeEditor_PinRect(a::ImVec2, b::ImVec2)::Cvoid
 end
 
 function ax_NodeEditor_PinPivotRect(a, b)
-    ccall((:ax_NodeEditor_PinPivotRect, libcimnodes_editor), Cvoid, (ImVec2, ImVec2), a, b)
+    @ccall libcimnodes_editor.ax_NodeEditor_PinPivotRect(a::ImVec2, b::ImVec2)::Cvoid
 end
 
 function ax_NodeEditor_PinPivotSize(size)
-    ccall((:ax_NodeEditor_PinPivotSize, libcimnodes_editor), Cvoid, (ImVec2,), size)
+    @ccall libcimnodes_editor.ax_NodeEditor_PinPivotSize(size::ImVec2)::Cvoid
 end
 
 function ax_NodeEditor_PinPivotScale(scale)
-    ccall((:ax_NodeEditor_PinPivotScale, libcimnodes_editor), Cvoid, (ImVec2,), scale)
+    @ccall libcimnodes_editor.ax_NodeEditor_PinPivotScale(scale::ImVec2)::Cvoid
 end
 
 function ax_NodeEditor_PinPivotAlignment(alignment)
-    ccall((:ax_NodeEditor_PinPivotAlignment, libcimnodes_editor), Cvoid, (ImVec2,), alignment)
+    @ccall libcimnodes_editor.ax_NodeEditor_PinPivotAlignment(alignment::ImVec2)::Cvoid
 end
 
 function ax_NodeEditor_EndPin()
-    ccall((:ax_NodeEditor_EndPin, libcimnodes_editor), Cvoid, ())
+    @ccall libcimnodes_editor.ax_NodeEditor_EndPin()::Cvoid
 end
 
 function ax_NodeEditor_Group(size)
-    ccall((:ax_NodeEditor_Group, libcimnodes_editor), Cvoid, (ImVec2,), size)
+    @ccall libcimnodes_editor.ax_NodeEditor_Group(size::ImVec2)::Cvoid
 end
 
 function ax_NodeEditor_EndNode()
-    ccall((:ax_NodeEditor_EndNode, libcimnodes_editor), Cvoid, ())
+    @ccall libcimnodes_editor.ax_NodeEditor_EndNode()::Cvoid
 end
 
 function ax_NodeEditor_BeginGroupHint(nodeId)
-    ccall((:ax_NodeEditor_BeginGroupHint, libcimnodes_editor), Bool, (Ptr{NodeId},), nodeId)
+    @ccall libcimnodes_editor.ax_NodeEditor_BeginGroupHint(nodeId::NodeId)::Bool
 end
 
 function ax_NodeEditor_GetGroupMin()
-    ccall((:ax_NodeEditor_GetGroupMin, libcimnodes_editor), ImVec2, ())
+    @ccall libcimnodes_editor.ax_NodeEditor_GetGroupMin()::ImVec2
 end
 
 function ax_NodeEditor_GetGroupMax()
-    ccall((:ax_NodeEditor_GetGroupMax, libcimnodes_editor), ImVec2, ())
+    @ccall libcimnodes_editor.ax_NodeEditor_GetGroupMax()::ImVec2
 end
 
 function ax_NodeEditor_GetHintForegroundDrawList()
-    ccall((:ax_NodeEditor_GetHintForegroundDrawList, libcimnodes_editor), Ptr{ImDrawList}, ())
+    @ccall libcimnodes_editor.ax_NodeEditor_GetHintForegroundDrawList()::Ptr{ImDrawList}
 end
 
 function ax_NodeEditor_GetHintBackgroundDrawList()
-    ccall((:ax_NodeEditor_GetHintBackgroundDrawList, libcimnodes_editor), Ptr{ImDrawList}, ())
+    @ccall libcimnodes_editor.ax_NodeEditor_GetHintBackgroundDrawList()::Ptr{ImDrawList}
 end
 
 function ax_NodeEditor_EndGroupHint()
-    ccall((:ax_NodeEditor_EndGroupHint, libcimnodes_editor), Cvoid, ())
+    @ccall libcimnodes_editor.ax_NodeEditor_EndGroupHint()::Cvoid
 end
 
 function ax_NodeEditor_GetNodeBackgroundDrawList(nodeId)
-    ccall((:ax_NodeEditor_GetNodeBackgroundDrawList, libcimnodes_editor), Ptr{ImDrawList}, (Ptr{NodeId},), nodeId)
+    @ccall libcimnodes_editor.ax_NodeEditor_GetNodeBackgroundDrawList(nodeId::NodeId)::Ptr{ImDrawList}
 end
 
 function ax_NodeEditor_Link(id, startPinId, endPinId, color, thickness)
-    ccall((:ax_NodeEditor_Link, libcimnodes_editor), Bool, (Ptr{LinkId}, Ptr{PinId}, Ptr{PinId}, ImVec4, Cfloat), id, startPinId, endPinId, color, thickness)
+    @ccall libcimnodes_editor.ax_NodeEditor_Link(id::LinkId, startPinId::PinId, endPinId::PinId, color::ImVec4, thickness::Cfloat)::Bool
 end
 
 function ax_NodeEditor_Flow(linkId, direction)
-    ccall((:ax_NodeEditor_Flow, libcimnodes_editor), Cvoid, (Ptr{LinkId}, FlowDirection), linkId, direction)
+    @ccall libcimnodes_editor.ax_NodeEditor_Flow(linkId::LinkId, direction::FlowDirection)::Cvoid
 end
 
 function ax_NodeEditor_BeginCreate(color, thickness)
-    ccall((:ax_NodeEditor_BeginCreate, libcimnodes_editor), Bool, (ImVec4, Cfloat), color, thickness)
+    @ccall libcimnodes_editor.ax_NodeEditor_BeginCreate(color::ImVec4, thickness::Cfloat)::Bool
 end
 
 function ax_NodeEditor_QueryNewLink_Nil(startId, endId)
-    ccall((:ax_NodeEditor_QueryNewLink_Nil, libcimnodes_editor), Bool, (Ptr{PinId}, Ptr{PinId}), startId, endId)
+    @ccall libcimnodes_editor.ax_NodeEditor_QueryNewLink_Nil(startId::Ptr{PinId}, endId::Ptr{PinId})::Bool
 end
 
 function ax_NodeEditor_QueryNewLink_Vec4(startId, endId, color, thickness)
-    ccall((:ax_NodeEditor_QueryNewLink_Vec4, libcimnodes_editor), Bool, (Ptr{PinId}, Ptr{PinId}, ImVec4, Cfloat), startId, endId, color, thickness)
+    @ccall libcimnodes_editor.ax_NodeEditor_QueryNewLink_Vec4(startId::Ptr{PinId}, endId::Ptr{PinId}, color::ImVec4, thickness::Cfloat)::Bool
 end
 
 function ax_NodeEditor_QueryNewNode_Nil(pinId)
-    ccall((:ax_NodeEditor_QueryNewNode_Nil, libcimnodes_editor), Bool, (Ptr{PinId},), pinId)
+    @ccall libcimnodes_editor.ax_NodeEditor_QueryNewNode_Nil(pinId::Ptr{PinId})::Bool
 end
 
 function ax_NodeEditor_QueryNewNode_Vec4(pinId, color, thickness)
-    ccall((:ax_NodeEditor_QueryNewNode_Vec4, libcimnodes_editor), Bool, (Ptr{PinId}, ImVec4, Cfloat), pinId, color, thickness)
+    @ccall libcimnodes_editor.ax_NodeEditor_QueryNewNode_Vec4(pinId::Ptr{PinId}, color::ImVec4, thickness::Cfloat)::Bool
 end
 
 function ax_NodeEditor_AcceptNewItem_Nil()
-    ccall((:ax_NodeEditor_AcceptNewItem_Nil, libcimnodes_editor), Bool, ())
+    @ccall libcimnodes_editor.ax_NodeEditor_AcceptNewItem_Nil()::Bool
 end
 
 function ax_NodeEditor_AcceptNewItem_Vec4(color, thickness)
-    ccall((:ax_NodeEditor_AcceptNewItem_Vec4, libcimnodes_editor), Bool, (ImVec4, Cfloat), color, thickness)
+    @ccall libcimnodes_editor.ax_NodeEditor_AcceptNewItem_Vec4(color::ImVec4, thickness::Cfloat)::Bool
 end
 
 function ax_NodeEditor_RejectNewItem_Nil()
-    ccall((:ax_NodeEditor_RejectNewItem_Nil, libcimnodes_editor), Cvoid, ())
+    @ccall libcimnodes_editor.ax_NodeEditor_RejectNewItem_Nil()::Cvoid
 end
 
 function ax_NodeEditor_RejectNewItem_Vec4(color, thickness)
-    ccall((:ax_NodeEditor_RejectNewItem_Vec4, libcimnodes_editor), Cvoid, (ImVec4, Cfloat), color, thickness)
+    @ccall libcimnodes_editor.ax_NodeEditor_RejectNewItem_Vec4(color::ImVec4, thickness::Cfloat)::Cvoid
 end
 
 function ax_NodeEditor_EndCreate()
-    ccall((:ax_NodeEditor_EndCreate, libcimnodes_editor), Cvoid, ())
+    @ccall libcimnodes_editor.ax_NodeEditor_EndCreate()::Cvoid
 end
 
 function ax_NodeEditor_BeginDelete()
-    ccall((:ax_NodeEditor_BeginDelete, libcimnodes_editor), Bool, ())
+    @ccall libcimnodes_editor.ax_NodeEditor_BeginDelete()::Bool
 end
 
 function ax_NodeEditor_QueryDeletedLink(linkId, startId, endId)
-    ccall((:ax_NodeEditor_QueryDeletedLink, libcimnodes_editor), Bool, (Ptr{LinkId}, Ptr{PinId}, Ptr{PinId}), linkId, startId, endId)
+    @ccall libcimnodes_editor.ax_NodeEditor_QueryDeletedLink(linkId::Ptr{LinkId}, startId::Ptr{PinId}, endId::Ptr{PinId})::Bool
 end
 
 function ax_NodeEditor_QueryDeletedNode(nodeId)
-    ccall((:ax_NodeEditor_QueryDeletedNode, libcimnodes_editor), Bool, (Ptr{NodeId},), nodeId)
+    @ccall libcimnodes_editor.ax_NodeEditor_QueryDeletedNode(nodeId::Ptr{NodeId})::Bool
 end
 
 function ax_NodeEditor_AcceptDeletedItem(deleteDependencies)
-    ccall((:ax_NodeEditor_AcceptDeletedItem, libcimnodes_editor), Bool, (Bool,), deleteDependencies)
+    @ccall libcimnodes_editor.ax_NodeEditor_AcceptDeletedItem(deleteDependencies::Bool)::Bool
 end
 
 function ax_NodeEditor_RejectDeletedItem()
-    ccall((:ax_NodeEditor_RejectDeletedItem, libcimnodes_editor), Cvoid, ())
+    @ccall libcimnodes_editor.ax_NodeEditor_RejectDeletedItem()::Cvoid
 end
 
 function ax_NodeEditor_EndDelete()
-    ccall((:ax_NodeEditor_EndDelete, libcimnodes_editor), Cvoid, ())
+    @ccall libcimnodes_editor.ax_NodeEditor_EndDelete()::Cvoid
 end
 
 function ax_NodeEditor_SetNodePosition(nodeId, editorPosition)
-    ccall((:ax_NodeEditor_SetNodePosition, libcimnodes_editor), Cvoid, (Ptr{NodeId}, ImVec2), nodeId, editorPosition)
+    @ccall libcimnodes_editor.ax_NodeEditor_SetNodePosition(nodeId::NodeId, editorPosition::ImVec2)::Cvoid
 end
 
 function ax_NodeEditor_SetGroupSize(nodeId, size)
-    ccall((:ax_NodeEditor_SetGroupSize, libcimnodes_editor), Cvoid, (Ptr{NodeId}, ImVec2), nodeId, size)
+    @ccall libcimnodes_editor.ax_NodeEditor_SetGroupSize(nodeId::NodeId, size::ImVec2)::Cvoid
 end
 
 function ax_NodeEditor_GetNodePosition(nodeId)
-    ccall((:ax_NodeEditor_GetNodePosition, libcimnodes_editor), ImVec2, (Ptr{NodeId},), nodeId)
+    @ccall libcimnodes_editor.ax_NodeEditor_GetNodePosition(nodeId::NodeId)::ImVec2
 end
 
 function ax_NodeEditor_GetNodeSize(nodeId)
-    ccall((:ax_NodeEditor_GetNodeSize, libcimnodes_editor), ImVec2, (Ptr{NodeId},), nodeId)
+    @ccall libcimnodes_editor.ax_NodeEditor_GetNodeSize(nodeId::NodeId)::ImVec2
 end
 
 function ax_NodeEditor_CenterNodeOnScreen(nodeId)
-    ccall((:ax_NodeEditor_CenterNodeOnScreen, libcimnodes_editor), Cvoid, (Ptr{NodeId},), nodeId)
+    @ccall libcimnodes_editor.ax_NodeEditor_CenterNodeOnScreen(nodeId::NodeId)::Cvoid
 end
 
 function ax_NodeEditor_SetNodeZPosition(nodeId, z)
-    ccall((:ax_NodeEditor_SetNodeZPosition, libcimnodes_editor), Cvoid, (Ptr{NodeId}, Cfloat), nodeId, z)
+    @ccall libcimnodes_editor.ax_NodeEditor_SetNodeZPosition(nodeId::NodeId, z::Cfloat)::Cvoid
 end
 
 function ax_NodeEditor_GetNodeZPosition(nodeId)
-    ccall((:ax_NodeEditor_GetNodeZPosition, libcimnodes_editor), Cfloat, (Ptr{NodeId},), nodeId)
+    @ccall libcimnodes_editor.ax_NodeEditor_GetNodeZPosition(nodeId::NodeId)::Cfloat
 end
 
 function ax_NodeEditor_RestoreNodeState(nodeId)
-    ccall((:ax_NodeEditor_RestoreNodeState, libcimnodes_editor), Cvoid, (Ptr{NodeId},), nodeId)
+    @ccall libcimnodes_editor.ax_NodeEditor_RestoreNodeState(nodeId::NodeId)::Cvoid
 end
 
 function ax_NodeEditor_Suspend()
-    ccall((:ax_NodeEditor_Suspend, libcimnodes_editor), Cvoid, ())
+    @ccall libcimnodes_editor.ax_NodeEditor_Suspend()::Cvoid
 end
 
 function ax_NodeEditor_Resume()
-    ccall((:ax_NodeEditor_Resume, libcimnodes_editor), Cvoid, ())
+    @ccall libcimnodes_editor.ax_NodeEditor_Resume()::Cvoid
 end
 
 function ax_NodeEditor_IsSuspended()
-    ccall((:ax_NodeEditor_IsSuspended, libcimnodes_editor), Bool, ())
+    @ccall libcimnodes_editor.ax_NodeEditor_IsSuspended()::Bool
 end
 
 function ax_NodeEditor_IsActive()
-    ccall((:ax_NodeEditor_IsActive, libcimnodes_editor), Bool, ())
+    @ccall libcimnodes_editor.ax_NodeEditor_IsActive()::Bool
 end
 
 function ax_NodeEditor_HasSelectionChanged()
-    ccall((:ax_NodeEditor_HasSelectionChanged, libcimnodes_editor), Bool, ())
+    @ccall libcimnodes_editor.ax_NodeEditor_HasSelectionChanged()::Bool
 end
 
 function ax_NodeEditor_GetSelectedObjectCount()
-    ccall((:ax_NodeEditor_GetSelectedObjectCount, libcimnodes_editor), Cint, ())
+    @ccall libcimnodes_editor.ax_NodeEditor_GetSelectedObjectCount()::Cint
 end
 
 function ax_NodeEditor_GetSelectedNodes(nodes, size)
-    ccall((:ax_NodeEditor_GetSelectedNodes, libcimnodes_editor), Cint, (Ptr{NodeId}, Cint), nodes, size)
+    @ccall libcimnodes_editor.ax_NodeEditor_GetSelectedNodes(nodes::Ptr{NodeId}, size::Cint)::Cint
 end
 
 function ax_NodeEditor_GetSelectedLinks(links, size)
-    ccall((:ax_NodeEditor_GetSelectedLinks, libcimnodes_editor), Cint, (Ptr{LinkId}, Cint), links, size)
+    @ccall libcimnodes_editor.ax_NodeEditor_GetSelectedLinks(links::Ptr{LinkId}, size::Cint)::Cint
 end
 
 function ax_NodeEditor_IsNodeSelected(nodeId)
-    ccall((:ax_NodeEditor_IsNodeSelected, libcimnodes_editor), Bool, (Ptr{NodeId},), nodeId)
+    @ccall libcimnodes_editor.ax_NodeEditor_IsNodeSelected(nodeId::NodeId)::Bool
 end
 
 function ax_NodeEditor_IsLinkSelected(linkId)
-    ccall((:ax_NodeEditor_IsLinkSelected, libcimnodes_editor), Bool, (Ptr{LinkId},), linkId)
+    @ccall libcimnodes_editor.ax_NodeEditor_IsLinkSelected(linkId::LinkId)::Bool
 end
 
 function ax_NodeEditor_ClearSelection()
-    ccall((:ax_NodeEditor_ClearSelection, libcimnodes_editor), Cvoid, ())
+    @ccall libcimnodes_editor.ax_NodeEditor_ClearSelection()::Cvoid
 end
 
 function ax_NodeEditor_SelectNode(nodeId, append)
-    ccall((:ax_NodeEditor_SelectNode, libcimnodes_editor), Cvoid, (Ptr{NodeId}, Bool), nodeId, append)
+    @ccall libcimnodes_editor.ax_NodeEditor_SelectNode(nodeId::NodeId, append::Bool)::Cvoid
 end
 
 function ax_NodeEditor_SelectLink(linkId, append)
-    ccall((:ax_NodeEditor_SelectLink, libcimnodes_editor), Cvoid, (Ptr{LinkId}, Bool), linkId, append)
+    @ccall libcimnodes_editor.ax_NodeEditor_SelectLink(linkId::LinkId, append::Bool)::Cvoid
 end
 
 function ax_NodeEditor_DeselectNode(nodeId)
-    ccall((:ax_NodeEditor_DeselectNode, libcimnodes_editor), Cvoid, (Ptr{NodeId},), nodeId)
+    @ccall libcimnodes_editor.ax_NodeEditor_DeselectNode(nodeId::NodeId)::Cvoid
 end
 
 function ax_NodeEditor_DeselectLink(linkId)
-    ccall((:ax_NodeEditor_DeselectLink, libcimnodes_editor), Cvoid, (Ptr{LinkId},), linkId)
+    @ccall libcimnodes_editor.ax_NodeEditor_DeselectLink(linkId::LinkId)::Cvoid
 end
 
 function ax_NodeEditor_DeleteNode(nodeId)
-    ccall((:ax_NodeEditor_DeleteNode, libcimnodes_editor), Bool, (Ptr{NodeId},), nodeId)
+    @ccall libcimnodes_editor.ax_NodeEditor_DeleteNode(nodeId::NodeId)::Bool
 end
 
 function ax_NodeEditor_DeleteLink(linkId)
-    ccall((:ax_NodeEditor_DeleteLink, libcimnodes_editor), Bool, (Ptr{LinkId},), linkId)
+    @ccall libcimnodes_editor.ax_NodeEditor_DeleteLink(linkId::LinkId)::Bool
 end
 
 function ax_NodeEditor_HasAnyLinks_NodeId(nodeId)
-    ccall((:ax_NodeEditor_HasAnyLinks_NodeId, libcimnodes_editor), Bool, (Ptr{NodeId},), nodeId)
+    @ccall libcimnodes_editor.ax_NodeEditor_HasAnyLinks_NodeId(nodeId::NodeId)::Bool
 end
 
 function ax_NodeEditor_HasAnyLinks_PinId(pinId)
-    ccall((:ax_NodeEditor_HasAnyLinks_PinId, libcimnodes_editor), Bool, (Ptr{PinId},), pinId)
+    @ccall libcimnodes_editor.ax_NodeEditor_HasAnyLinks_PinId(pinId::PinId)::Bool
 end
 
 function ax_NodeEditor_BreakLinks_NodeId(nodeId)
-    ccall((:ax_NodeEditor_BreakLinks_NodeId, libcimnodes_editor), Cint, (Ptr{NodeId},), nodeId)
+    @ccall libcimnodes_editor.ax_NodeEditor_BreakLinks_NodeId(nodeId::NodeId)::Cint
 end
 
 function ax_NodeEditor_BreakLinks_PinId(pinId)
-    ccall((:ax_NodeEditor_BreakLinks_PinId, libcimnodes_editor), Cint, (Ptr{PinId},), pinId)
+    @ccall libcimnodes_editor.ax_NodeEditor_BreakLinks_PinId(pinId::PinId)::Cint
 end
 
 function ax_NodeEditor_NavigateToContent(duration)
-    ccall((:ax_NodeEditor_NavigateToContent, libcimnodes_editor), Cvoid, (Cfloat,), duration)
+    @ccall libcimnodes_editor.ax_NodeEditor_NavigateToContent(duration::Cfloat)::Cvoid
 end
 
 function ax_NodeEditor_NavigateToSelection(zoomIn, duration)
-    ccall((:ax_NodeEditor_NavigateToSelection, libcimnodes_editor), Cvoid, (Bool, Cfloat), zoomIn, duration)
+    @ccall libcimnodes_editor.ax_NodeEditor_NavigateToSelection(zoomIn::Bool, duration::Cfloat)::Cvoid
 end
 
 function ax_NodeEditor_ShowNodeContextMenu(nodeId)
-    ccall((:ax_NodeEditor_ShowNodeContextMenu, libcimnodes_editor), Bool, (Ptr{NodeId},), nodeId)
+    @ccall libcimnodes_editor.ax_NodeEditor_ShowNodeContextMenu(nodeId::Ptr{NodeId})::Bool
 end
 
 function ax_NodeEditor_ShowPinContextMenu(pinId)
-    ccall((:ax_NodeEditor_ShowPinContextMenu, libcimnodes_editor), Bool, (Ptr{PinId},), pinId)
+    @ccall libcimnodes_editor.ax_NodeEditor_ShowPinContextMenu(pinId::Ptr{PinId})::Bool
 end
 
 function ax_NodeEditor_ShowLinkContextMenu(linkId)
-    ccall((:ax_NodeEditor_ShowLinkContextMenu, libcimnodes_editor), Bool, (Ptr{LinkId},), linkId)
+    @ccall libcimnodes_editor.ax_NodeEditor_ShowLinkContextMenu(linkId::Ptr{LinkId})::Bool
 end
 
 function ax_NodeEditor_ShowBackgroundContextMenu()
-    ccall((:ax_NodeEditor_ShowBackgroundContextMenu, libcimnodes_editor), Bool, ())
+    @ccall libcimnodes_editor.ax_NodeEditor_ShowBackgroundContextMenu()::Bool
 end
 
 function ax_NodeEditor_EnableShortcuts(enable)
-    ccall((:ax_NodeEditor_EnableShortcuts, libcimnodes_editor), Cvoid, (Bool,), enable)
+    @ccall libcimnodes_editor.ax_NodeEditor_EnableShortcuts(enable::Bool)::Cvoid
 end
 
 function ax_NodeEditor_AreShortcutsEnabled()
-    ccall((:ax_NodeEditor_AreShortcutsEnabled, libcimnodes_editor), Bool, ())
+    @ccall libcimnodes_editor.ax_NodeEditor_AreShortcutsEnabled()::Bool
 end
 
 function ax_NodeEditor_BeginShortcut()
-    ccall((:ax_NodeEditor_BeginShortcut, libcimnodes_editor), Bool, ())
+    @ccall libcimnodes_editor.ax_NodeEditor_BeginShortcut()::Bool
 end
 
 function ax_NodeEditor_AcceptCut()
-    ccall((:ax_NodeEditor_AcceptCut, libcimnodes_editor), Bool, ())
+    @ccall libcimnodes_editor.ax_NodeEditor_AcceptCut()::Bool
 end
 
 function ax_NodeEditor_AcceptCopy()
-    ccall((:ax_NodeEditor_AcceptCopy, libcimnodes_editor), Bool, ())
+    @ccall libcimnodes_editor.ax_NodeEditor_AcceptCopy()::Bool
 end
 
 function ax_NodeEditor_AcceptPaste()
-    ccall((:ax_NodeEditor_AcceptPaste, libcimnodes_editor), Bool, ())
+    @ccall libcimnodes_editor.ax_NodeEditor_AcceptPaste()::Bool
 end
 
 function ax_NodeEditor_AcceptDuplicate()
-    ccall((:ax_NodeEditor_AcceptDuplicate, libcimnodes_editor), Bool, ())
+    @ccall libcimnodes_editor.ax_NodeEditor_AcceptDuplicate()::Bool
 end
 
 function ax_NodeEditor_AcceptCreateNode()
-    ccall((:ax_NodeEditor_AcceptCreateNode, libcimnodes_editor), Bool, ())
+    @ccall libcimnodes_editor.ax_NodeEditor_AcceptCreateNode()::Bool
 end
 
 function ax_NodeEditor_GetActionContextSize()
-    ccall((:ax_NodeEditor_GetActionContextSize, libcimnodes_editor), Cint, ())
+    @ccall libcimnodes_editor.ax_NodeEditor_GetActionContextSize()::Cint
 end
 
 function ax_NodeEditor_GetActionContextNodes(nodes, size)
-    ccall((:ax_NodeEditor_GetActionContextNodes, libcimnodes_editor), Cint, (Ptr{NodeId}, Cint), nodes, size)
+    @ccall libcimnodes_editor.ax_NodeEditor_GetActionContextNodes(nodes::Ptr{NodeId}, size::Cint)::Cint
 end
 
 function ax_NodeEditor_GetActionContextLinks(links, size)
-    ccall((:ax_NodeEditor_GetActionContextLinks, libcimnodes_editor), Cint, (Ptr{LinkId}, Cint), links, size)
+    @ccall libcimnodes_editor.ax_NodeEditor_GetActionContextLinks(links::Ptr{LinkId}, size::Cint)::Cint
 end
 
 function ax_NodeEditor_EndShortcut()
-    ccall((:ax_NodeEditor_EndShortcut, libcimnodes_editor), Cvoid, ())
+    @ccall libcimnodes_editor.ax_NodeEditor_EndShortcut()::Cvoid
 end
 
 function ax_NodeEditor_GetCurrentZoom()
-    ccall((:ax_NodeEditor_GetCurrentZoom, libcimnodes_editor), Cfloat, ())
+    @ccall libcimnodes_editor.ax_NodeEditor_GetCurrentZoom()::Cfloat
 end
 
 function ax_NodeEditor_GetHoveredNode()
-    ccall((:ax_NodeEditor_GetHoveredNode, libcimnodes_editor), Ptr{NodeId}, ())
+    @ccall libcimnodes_editor.ax_NodeEditor_GetHoveredNode()::NodeId
 end
 
 function ax_NodeEditor_GetHoveredPin()
-    ccall((:ax_NodeEditor_GetHoveredPin, libcimnodes_editor), Ptr{PinId}, ())
+    @ccall libcimnodes_editor.ax_NodeEditor_GetHoveredPin()::PinId
 end
 
 function ax_NodeEditor_GetHoveredLink()
-    ccall((:ax_NodeEditor_GetHoveredLink, libcimnodes_editor), Ptr{LinkId}, ())
+    @ccall libcimnodes_editor.ax_NodeEditor_GetHoveredLink()::LinkId
 end
 
 function ax_NodeEditor_GetDoubleClickedNode()
-    ccall((:ax_NodeEditor_GetDoubleClickedNode, libcimnodes_editor), Ptr{NodeId}, ())
+    @ccall libcimnodes_editor.ax_NodeEditor_GetDoubleClickedNode()::NodeId
 end
 
 function ax_NodeEditor_GetDoubleClickedPin()
-    ccall((:ax_NodeEditor_GetDoubleClickedPin, libcimnodes_editor), Ptr{PinId}, ())
+    @ccall libcimnodes_editor.ax_NodeEditor_GetDoubleClickedPin()::PinId
 end
 
 function ax_NodeEditor_GetDoubleClickedLink()
-    ccall((:ax_NodeEditor_GetDoubleClickedLink, libcimnodes_editor), Ptr{LinkId}, ())
+    @ccall libcimnodes_editor.ax_NodeEditor_GetDoubleClickedLink()::LinkId
 end
 
 function ax_NodeEditor_IsBackgroundClicked()
-    ccall((:ax_NodeEditor_IsBackgroundClicked, libcimnodes_editor), Bool, ())
+    @ccall libcimnodes_editor.ax_NodeEditor_IsBackgroundClicked()::Bool
 end
 
 function ax_NodeEditor_IsBackgroundDoubleClicked()
-    ccall((:ax_NodeEditor_IsBackgroundDoubleClicked, libcimnodes_editor), Bool, ())
+    @ccall libcimnodes_editor.ax_NodeEditor_IsBackgroundDoubleClicked()::Bool
 end
 
 function ax_NodeEditor_GetBackgroundClickButtonIndex()
-    ccall((:ax_NodeEditor_GetBackgroundClickButtonIndex, libcimnodes_editor), ImGuiMouseButton, ())
+    @ccall libcimnodes_editor.ax_NodeEditor_GetBackgroundClickButtonIndex()::ImGuiMouseButton
 end
 
 function ax_NodeEditor_GetBackgroundDoubleClickButtonIndex()
-    ccall((:ax_NodeEditor_GetBackgroundDoubleClickButtonIndex, libcimnodes_editor), ImGuiMouseButton, ())
+    @ccall libcimnodes_editor.ax_NodeEditor_GetBackgroundDoubleClickButtonIndex()::ImGuiMouseButton
 end
 
 function ax_NodeEditor_GetLinkPins(linkId, startPinId, endPinId)
-    ccall((:ax_NodeEditor_GetLinkPins, libcimnodes_editor), Bool, (Ptr{LinkId}, Ptr{PinId}, Ptr{PinId}), linkId, startPinId, endPinId)
+    @ccall libcimnodes_editor.ax_NodeEditor_GetLinkPins(linkId::LinkId, startPinId::Ptr{PinId}, endPinId::Ptr{PinId})::Bool
 end
 
 function ax_NodeEditor_PinHadAnyLinks(pinId)
-    ccall((:ax_NodeEditor_PinHadAnyLinks, libcimnodes_editor), Bool, (Ptr{PinId},), pinId)
+    @ccall libcimnodes_editor.ax_NodeEditor_PinHadAnyLinks(pinId::PinId)::Bool
 end
 
 function ax_NodeEditor_GetScreenSize()
-    ccall((:ax_NodeEditor_GetScreenSize, libcimnodes_editor), ImVec2, ())
+    @ccall libcimnodes_editor.ax_NodeEditor_GetScreenSize()::ImVec2
 end
 
 function ax_NodeEditor_ScreenToCanvas(pos)
-    ccall((:ax_NodeEditor_ScreenToCanvas, libcimnodes_editor), ImVec2, (ImVec2,), pos)
+    @ccall libcimnodes_editor.ax_NodeEditor_ScreenToCanvas(pos::ImVec2)::ImVec2
 end
 
 function ax_NodeEditor_CanvasToScreen(pos)
-    ccall((:ax_NodeEditor_CanvasToScreen, libcimnodes_editor), ImVec2, (ImVec2,), pos)
+    @ccall libcimnodes_editor.ax_NodeEditor_CanvasToScreen(pos::ImVec2)::ImVec2
 end
 
 function ax_NodeEditor_GetNodeCount()
-    ccall((:ax_NodeEditor_GetNodeCount, libcimnodes_editor), Cint, ())
+    @ccall libcimnodes_editor.ax_NodeEditor_GetNodeCount()::Cint
 end
 
 function ax_NodeEditor_GetOrderedNodeIds(nodes, size)
-    ccall((:ax_NodeEditor_GetOrderedNodeIds, libcimnodes_editor), Cint, (Ptr{NodeId}, Cint), nodes, size)
+    @ccall libcimnodes_editor.ax_NodeEditor_GetOrderedNodeIds(nodes::Ptr{NodeId}, size::Cint)::Cint
 end
 
 function ax_NodeEditor_NodeId(val)
-    ccall((:ax_NodeEditor_NodeId, libcimnodes_editor), Ptr{NodeId}, (Csize_t,), val)
-end
-
-function ax_NodeEditor_NodeId_destroy(self)
-    ccall((:ax_NodeEditor_NodeId_destroy, libcimnodes_editor), Cvoid, (Ptr{NodeId},), self)
+    @ccall libcimnodes_editor.ax_NodeEditor_NodeId(val::Csize_t)::NodeId
 end
 
 function ax_NodeEditor_PinId(val)
-    ccall((:ax_NodeEditor_PinId, libcimnodes_editor), Ptr{PinId}, (Csize_t,), val)
-end
-
-function ax_NodeEditor_PinId_destroy(self)
-    ccall((:ax_NodeEditor_PinId_destroy, libcimnodes_editor), Cvoid, (Ptr{PinId},), self)
+    @ccall libcimnodes_editor.ax_NodeEditor_PinId(val::Csize_t)::PinId
 end
 
 function ax_NodeEditor_LinkId(val)
-    ccall((:ax_NodeEditor_LinkId, libcimnodes_editor), Ptr{LinkId}, (Csize_t,), val)
-end
-
-function ax_NodeEditor_LinkId_destroy(self)
-    ccall((:ax_NodeEditor_LinkId_destroy, libcimnodes_editor), Cvoid, (Ptr{LinkId},), self)
+    @ccall libcimnodes_editor.ax_NodeEditor_LinkId(val::Csize_t)::LinkId
 end
 
 function ax_NodeEditor_NodeId_value(self)
-    ccall((:ax_NodeEditor_NodeId_value, libcimnodes_editor), Csize_t, (Ptr{NodeId},), self)
+    @ccall libcimnodes_editor.ax_NodeEditor_NodeId_value(self::NodeId)::Csize_t
 end
 
 function ax_NodeEditor_PinId_value(self)
-    ccall((:ax_NodeEditor_PinId_value, libcimnodes_editor), Csize_t, (Ptr{PinId},), self)
+    @ccall libcimnodes_editor.ax_NodeEditor_PinId_value(self::PinId)::Csize_t
 end
 
 function ax_NodeEditor_LinkId_value(self)
-    ccall((:ax_NodeEditor_LinkId_value, libcimnodes_editor), Csize_t, (Ptr{LinkId},), self)
+    @ccall libcimnodes_editor.ax_NodeEditor_LinkId_value(self::LinkId)::Csize_t
 end
 
 end # module
