@@ -1,6 +1,6 @@
 name = "ImGuiNodeEditor"
 uuid = "85025696-5a8b-405d-b30a-426ddbef1325"
-version = "1.0.0"
+version = "1.0.1"
 authors = ["JamesWrigley <james@puiterwijk.org>"]
 
 [deps]
@@ -11,14 +11,14 @@ cimnodes_editor_jll = "ff5929f2-4478-5c50-a7ea-e65c06704854"
 
 [compat]
 Aqua = "0.8"
-CEnum = "0.5.0"
-CImGui = "9"
-DocStringExtensions = "0.9.5"
+CEnum = "0.5.0, 1"
+CImGui = "9, 10"
+DocStringExtensions = "0.9.5, 0.10"
 GLFW = "3.4"
-ImGuiTestEngine = "2"
+ImGuiTestEngine = "2, 3"
 ModernGL = "1.1"
 Test = "1"
-cimnodes_editor_jll = "1"
+cimnodes_editor_jll = "1, 2"
 julia = "1.10"
 
 [extras]

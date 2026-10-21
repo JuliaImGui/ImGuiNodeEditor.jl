@@ -1,4 +1,4 @@
-import JSON3
+import JSON
 using Clang: Clang
 using Clang.Generators
 using Clang.JLLEnvs
@@ -400,9 +400,9 @@ function get_new2old()
     # Newer cimnodes_editor bindings suffix non-POD-types-that-look-like-POD-types
     # with '_c', so rename them back to their old names.
     # See: https://github.com/cimgui/cimgui/issues/309
-    structs_and_enums = JSON3.read(cimnodes_editor_jll.cimnodes_editor_structs_and_enums)
+    structs_and_enums = JSON.parsefile(cimnodes_editor_jll.cimnodes_editor_structs_and_enums)
     nonpod_used = structs_and_enums[:nonPOD_used]
-    new2old_names = Dict([Symbol(x, "_c") => x for x in keys(nonpod_used)])
+    new2old_names = Dict([Symbol(x, "_c") => Symbol(x) for x in keys(nonpod_used)])
 end
 
 """
@@ -412,7 +412,7 @@ function get_wrappers(dag::ExprDAG)
     methods = WrapperMethod[]
     structs = String[]
     enums = Symbol[]
-    imgui_defs = JSON3.read(cimnodes_editor_jll.cimnodes_editor_definitions)
+    imgui_defs = JSON.parsefile(cimnodes_editor_jll.cimnodes_editor_definitions)
     new2old_names = get_new2old()
 
     for node in dag.nodes

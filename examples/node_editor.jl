@@ -117,7 +117,7 @@ function node_editor(; engine=nothing, save_settings=true, links=LinkInfo[],
         zoom = ne.GetCurrentZoom()
         magnification = zoom > 0 ? 1.0f0 / zoom : 1.0f0
         density = exp2(ceil(log2(max(magnification, 1.0f0))))
-        ig.SetFontRasterizerDensity(density)
+        ne.set_pixel_density(density)
 
         # Place the nodes once, then let the user drag them around.
         if first_frame[]
@@ -172,7 +172,7 @@ function node_editor(; engine=nothing, save_settings=true, links=LinkInfo[],
 
         ne.End()
         # Restore the default density for the regular (unzoomed) UI.
-        ig.SetFontRasterizerDensity(1.0f0)
+        ne.set_pixel_density(1.0f0)
 
         if first_frame[]
             ne.NavigateToContent(0)

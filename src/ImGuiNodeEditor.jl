@@ -2,9 +2,24 @@ module ImGuiNodeEditor
 
 include("../lib/x86_64-linux-gnu.jl")
 
-using DocStringExtensions: TYPEDSIGNATURES
+using DocStringExtensions: DocStringExtensions
+@static if pkgversion(DocStringExtensions) >= v"0.10"
+    const TYPEDSIGNATURES = DocStringExtensions.TypedMethodSignatures(defaults=true)
+else
+    using DocStringExtensions: TYPEDSIGNATURES
+end
+
 using CImGui: CImGui as ig, ImVec2, ImVec4
 include("wrapper.jl")
+
+# Renamed in Dear ImGui 1.93 (CImGui v10)
+@static if pkgversion(ig) >= v"10"
+    const set_pixel_density = ig.SetPixelDensity
+    const get_pixel_density = ig.GetPixelDensity
+else
+    const set_pixel_density = ig.SetFontRasterizerDensity
+    const get_pixel_density = ig.GetFontRasterizerDensity
+end
 
 """
     current_scale() -> Float32
@@ -45,14 +60,14 @@ macro with_font_scale(scale, body)
     quote
         magnification = current_scale()
         base_size = unsafe_load(ig.GetStyle()).FontSizeBase
-        saved_density = ig.GetFontRasterizerDensity()
+        saved_density = get_pixel_density()
 
         ig.PushFont(C_NULL, base_size * $(esc(scale)) / magnification)
-        ig.SetFontRasterizerDensity(exp2(ceil(log2(magnification))))
+        set_pixel_density(exp2(ceil(log2(magnification))))
         try
             $(esc(body))
         finally
-            ig.SetFontRasterizerDensity(saved_density)
+            set_pixel_density(saved_density)
             ig.PopFont()
         end
     end
