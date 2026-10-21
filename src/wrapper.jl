@@ -88,7 +88,7 @@ $(TYPEDSIGNATURES)
 
 The returned `Config` is heap-allocated, it must be freed with [`Destroy`](@ref).
 
-[Upstream link](https://github.com/thedmd/imgui-node-editor/blob/master/imgui_node_editor.h#L111).
+[Upstream link](https://github.com/thedmd/imgui-node-editor/blob/master/imgui_node_editor.h#L109).
 """
 lib.Config() = lib.ax_NodeEditor_Config_Config_Config()
 
@@ -100,231 +100,231 @@ Destroy(self::Ptr{Config}) = lib.Config_destroy(self)
 """
 $(TYPEDSIGNATURES)
 
-[Upstream link](https://github.com/thedmd/imgui-node-editor/blob/master/imgui_node_editor.h#L289).
+[Upstream link](https://github.com/thedmd/imgui-node-editor/blob/master/imgui_node_editor.h#L287).
 """
 SetCurrentEditor(ctx) = lib.ax_NodeEditor_SetCurrentEditor(ctx)
 
 """
 $(TYPEDSIGNATURES)
 
-[Upstream link](https://github.com/thedmd/imgui-node-editor/blob/master/imgui_node_editor.h#L290).
+[Upstream link](https://github.com/thedmd/imgui-node-editor/blob/master/imgui_node_editor.h#L288).
 """
 GetCurrentEditor() = lib.ax_NodeEditor_GetCurrentEditor()
 
 """
 $(TYPEDSIGNATURES)
 
-[Upstream link](https://github.com/thedmd/imgui-node-editor/blob/master/imgui_node_editor.h#L291).
+[Upstream link](https://github.com/thedmd/imgui-node-editor/blob/master/imgui_node_editor.h#L289).
 """
 CreateEditor(config = C_NULL) = lib.ax_NodeEditor_CreateEditor(config)
 
 """
 $(TYPEDSIGNATURES)
 
-[Upstream link](https://github.com/thedmd/imgui-node-editor/blob/master/imgui_node_editor.h#L292).
+[Upstream link](https://github.com/thedmd/imgui-node-editor/blob/master/imgui_node_editor.h#L290).
 """
 DestroyEditor(ctx) = lib.ax_NodeEditor_DestroyEditor(ctx)
 
 """
 $(TYPEDSIGNATURES)
 
-[Upstream link](https://github.com/thedmd/imgui-node-editor/blob/master/imgui_node_editor.h#L293).
+[Upstream link](https://github.com/thedmd/imgui-node-editor/blob/master/imgui_node_editor.h#L291).
 """
 GetConfig(ctx = C_NULL) = lib.ax_NodeEditor_GetConfig(ctx)
 
 """
 $(TYPEDSIGNATURES)
 
-[Upstream link](https://github.com/thedmd/imgui-node-editor/blob/master/imgui_node_editor.h#L295).
+[Upstream link](https://github.com/thedmd/imgui-node-editor/blob/master/imgui_node_editor.h#L293).
 """
 GetStyle() = lib.ax_NodeEditor_GetStyle()
 
 """
 $(TYPEDSIGNATURES)
 
-[Upstream link](https://github.com/thedmd/imgui-node-editor/blob/master/imgui_node_editor.h#L296).
+[Upstream link](https://github.com/thedmd/imgui-node-editor/blob/master/imgui_node_editor.h#L294).
 """
 GetStyleColorName(colorIndex) = lib.ax_NodeEditor_GetStyleColorName(colorIndex)
 
 """
 $(TYPEDSIGNATURES)
 
-[Upstream link](https://github.com/thedmd/imgui-node-editor/blob/master/imgui_node_editor.h#L298).
+[Upstream link](https://github.com/thedmd/imgui-node-editor/blob/master/imgui_node_editor.h#L296).
 """
 PushStyleColor(colorIndex, color::Union{ImVec4,NTuple{4}}) = lib.ax_NodeEditor_PushStyleColor(colorIndex, color)
 
 """
 $(TYPEDSIGNATURES)
 
-[Upstream link](https://github.com/thedmd/imgui-node-editor/blob/master/imgui_node_editor.h#L299).
+[Upstream link](https://github.com/thedmd/imgui-node-editor/blob/master/imgui_node_editor.h#L297).
 """
 PopStyleColor(count = 1) = lib.ax_NodeEditor_PopStyleColor(count)
 
 """
 $(TYPEDSIGNATURES)
 
-[Upstream link](https://github.com/thedmd/imgui-node-editor/blob/master/imgui_node_editor.h#L301).
+[Upstream link](https://github.com/thedmd/imgui-node-editor/blob/master/imgui_node_editor.h#L299).
 """
 PushStyleVar(varIndex::StyleVar, value::Real) = lib.ax_NodeEditor_PushStyleVar_Float(varIndex, value)
 
 """
 $(TYPEDSIGNATURES)
 
-[Upstream link](https://github.com/thedmd/imgui-node-editor/blob/master/imgui_node_editor.h#L302).
+[Upstream link](https://github.com/thedmd/imgui-node-editor/blob/master/imgui_node_editor.h#L300).
 """
 PushStyleVar(varIndex::StyleVar, value::Union{ImVec2,NTuple{2}}) = lib.ax_NodeEditor_PushStyleVar_Vec2(varIndex, value)
 
 """
 $(TYPEDSIGNATURES)
 
-[Upstream link](https://github.com/thedmd/imgui-node-editor/blob/master/imgui_node_editor.h#L303).
+[Upstream link](https://github.com/thedmd/imgui-node-editor/blob/master/imgui_node_editor.h#L301).
 """
 PushStyleVar(varIndex::StyleVar, value::Union{ImVec4,NTuple{4}}) = lib.ax_NodeEditor_PushStyleVar_Vec4(varIndex, value)
 
 """
 $(TYPEDSIGNATURES)
 
-[Upstream link](https://github.com/thedmd/imgui-node-editor/blob/master/imgui_node_editor.h#L304).
+[Upstream link](https://github.com/thedmd/imgui-node-editor/blob/master/imgui_node_editor.h#L302).
 """
 PopStyleVar(count = 1) = lib.ax_NodeEditor_PopStyleVar(count)
 
 """
 $(TYPEDSIGNATURES)
 
-[Upstream link](https://github.com/thedmd/imgui-node-editor/blob/master/imgui_node_editor.h#L306).
+[Upstream link](https://github.com/thedmd/imgui-node-editor/blob/master/imgui_node_editor.h#L307).
 """
 Begin(id, size::Union{ImVec2,NTuple{2}} = ImVec2(0, 0)) = lib.ax_NodeEditor_Begin(id, size)
 
 """
 $(TYPEDSIGNATURES)
 
-[Upstream link](https://github.com/thedmd/imgui-node-editor/blob/master/imgui_node_editor.h#L307).
+[Upstream link](https://github.com/thedmd/imgui-node-editor/blob/master/imgui_node_editor.h#L308).
 """
 End() = lib.ax_NodeEditor_End()
 
 """
 $(TYPEDSIGNATURES)
 
-[Upstream link](https://github.com/thedmd/imgui-node-editor/blob/master/imgui_node_editor.h#L309).
+[Upstream link](https://github.com/thedmd/imgui-node-editor/blob/master/imgui_node_editor.h#L310).
 """
 BeginNode(id::NodeId) = lib.ax_NodeEditor_BeginNode(id)
 
 """
 $(TYPEDSIGNATURES)
 
-[Upstream link](https://github.com/thedmd/imgui-node-editor/blob/master/imgui_node_editor.h#L310).
+[Upstream link](https://github.com/thedmd/imgui-node-editor/blob/master/imgui_node_editor.h#L311).
 """
 BeginPin(id::PinId, kind) = lib.ax_NodeEditor_BeginPin(id, kind)
 
 """
 $(TYPEDSIGNATURES)
 
-[Upstream link](https://github.com/thedmd/imgui-node-editor/blob/master/imgui_node_editor.h#L311).
+[Upstream link](https://github.com/thedmd/imgui-node-editor/blob/master/imgui_node_editor.h#L312).
 """
 PinRect(a::Union{ImVec2,NTuple{2}}, b::Union{ImVec2,NTuple{2}}) = lib.ax_NodeEditor_PinRect(a, b)
 
 """
 $(TYPEDSIGNATURES)
 
-[Upstream link](https://github.com/thedmd/imgui-node-editor/blob/master/imgui_node_editor.h#L312).
+[Upstream link](https://github.com/thedmd/imgui-node-editor/blob/master/imgui_node_editor.h#L313).
 """
 PinPivotRect(a::Union{ImVec2,NTuple{2}}, b::Union{ImVec2,NTuple{2}}) = lib.ax_NodeEditor_PinPivotRect(a, b)
 
 """
 $(TYPEDSIGNATURES)
 
-[Upstream link](https://github.com/thedmd/imgui-node-editor/blob/master/imgui_node_editor.h#L313).
+[Upstream link](https://github.com/thedmd/imgui-node-editor/blob/master/imgui_node_editor.h#L314).
 """
 PinPivotSize(size::Union{ImVec2,NTuple{2}}) = lib.ax_NodeEditor_PinPivotSize(size)
 
 """
 $(TYPEDSIGNATURES)
 
-[Upstream link](https://github.com/thedmd/imgui-node-editor/blob/master/imgui_node_editor.h#L314).
+[Upstream link](https://github.com/thedmd/imgui-node-editor/blob/master/imgui_node_editor.h#L315).
 """
 PinPivotScale(scale::Union{ImVec2,NTuple{2}}) = lib.ax_NodeEditor_PinPivotScale(scale)
 
 """
 $(TYPEDSIGNATURES)
 
-[Upstream link](https://github.com/thedmd/imgui-node-editor/blob/master/imgui_node_editor.h#L315).
+[Upstream link](https://github.com/thedmd/imgui-node-editor/blob/master/imgui_node_editor.h#L316).
 """
 PinPivotAlignment(alignment::Union{ImVec2,NTuple{2}}) = lib.ax_NodeEditor_PinPivotAlignment(alignment)
 
 """
 $(TYPEDSIGNATURES)
 
-[Upstream link](https://github.com/thedmd/imgui-node-editor/blob/master/imgui_node_editor.h#L316).
+[Upstream link](https://github.com/thedmd/imgui-node-editor/blob/master/imgui_node_editor.h#L317).
 """
 EndPin() = lib.ax_NodeEditor_EndPin()
 
 """
 $(TYPEDSIGNATURES)
 
-[Upstream link](https://github.com/thedmd/imgui-node-editor/blob/master/imgui_node_editor.h#L317).
+[Upstream link](https://github.com/thedmd/imgui-node-editor/blob/master/imgui_node_editor.h#L318).
 """
 Group(size::Union{ImVec2,NTuple{2}}) = lib.ax_NodeEditor_Group(size)
 
 """
 $(TYPEDSIGNATURES)
 
-[Upstream link](https://github.com/thedmd/imgui-node-editor/blob/master/imgui_node_editor.h#L318).
+[Upstream link](https://github.com/thedmd/imgui-node-editor/blob/master/imgui_node_editor.h#L319).
 """
 EndNode() = lib.ax_NodeEditor_EndNode()
 
 """
 $(TYPEDSIGNATURES)
 
-[Upstream link](https://github.com/thedmd/imgui-node-editor/blob/master/imgui_node_editor.h#L320).
+[Upstream link](https://github.com/thedmd/imgui-node-editor/blob/master/imgui_node_editor.h#L321).
 """
 BeginGroupHint(nodeId::NodeId) = lib.ax_NodeEditor_BeginGroupHint(nodeId)
 
 """
 $(TYPEDSIGNATURES)
 
-[Upstream link](https://github.com/thedmd/imgui-node-editor/blob/master/imgui_node_editor.h#L321).
+[Upstream link](https://github.com/thedmd/imgui-node-editor/blob/master/imgui_node_editor.h#L322).
 """
 GetGroupMin() = lib.ax_NodeEditor_GetGroupMin()
 
 """
 $(TYPEDSIGNATURES)
 
-[Upstream link](https://github.com/thedmd/imgui-node-editor/blob/master/imgui_node_editor.h#L322).
+[Upstream link](https://github.com/thedmd/imgui-node-editor/blob/master/imgui_node_editor.h#L323).
 """
 GetGroupMax() = lib.ax_NodeEditor_GetGroupMax()
 
 """
 $(TYPEDSIGNATURES)
 
-[Upstream link](https://github.com/thedmd/imgui-node-editor/blob/master/imgui_node_editor.h#L323).
+[Upstream link](https://github.com/thedmd/imgui-node-editor/blob/master/imgui_node_editor.h#L324).
 """
 GetHintForegroundDrawList() = lib.ax_NodeEditor_GetHintForegroundDrawList()
 
 """
 $(TYPEDSIGNATURES)
 
-[Upstream link](https://github.com/thedmd/imgui-node-editor/blob/master/imgui_node_editor.h#L324).
+[Upstream link](https://github.com/thedmd/imgui-node-editor/blob/master/imgui_node_editor.h#L325).
 """
 GetHintBackgroundDrawList() = lib.ax_NodeEditor_GetHintBackgroundDrawList()
 
 """
 $(TYPEDSIGNATURES)
 
-[Upstream link](https://github.com/thedmd/imgui-node-editor/blob/master/imgui_node_editor.h#L325).
+[Upstream link](https://github.com/thedmd/imgui-node-editor/blob/master/imgui_node_editor.h#L326).
 """
 EndGroupHint() = lib.ax_NodeEditor_EndGroupHint()
 
 """
 $(TYPEDSIGNATURES)
 
-[Upstream link](https://github.com/thedmd/imgui-node-editor/blob/master/imgui_node_editor.h#L328).
+[Upstream link](https://github.com/thedmd/imgui-node-editor/blob/master/imgui_node_editor.h#L329).
 """
 GetNodeBackgroundDrawList(nodeId::NodeId) = lib.ax_NodeEditor_GetNodeBackgroundDrawList(nodeId)
 
 """
 $(TYPEDSIGNATURES)
 
-[Upstream link](https://github.com/thedmd/imgui-node-editor/blob/master/imgui_node_editor.h#L330).
+[Upstream link](https://github.com/thedmd/imgui-node-editor/blob/master/imgui_node_editor.h#L331).
 """
 Link(id, startPinId::PinId, endPinId::PinId, color::Union{ImVec4,NTuple{4}} = ImVec4(1, 1, 1, 1), thickness = 1.0f0) =
     lib.ax_NodeEditor_Link(id, startPinId, endPinId, color, thickness)
@@ -332,14 +332,14 @@ Link(id, startPinId::PinId, endPinId::PinId, color::Union{ImVec4,NTuple{4}} = Im
 """
 $(TYPEDSIGNATURES)
 
-[Upstream link](https://github.com/thedmd/imgui-node-editor/blob/master/imgui_node_editor.h#L332).
+[Upstream link](https://github.com/thedmd/imgui-node-editor/blob/master/imgui_node_editor.h#L333).
 """
 Flow(linkId, direction = FlowDirection_Forward) = lib.ax_NodeEditor_Flow(linkId, direction)
 
 """
 $(TYPEDSIGNATURES)
 
-[Upstream link](https://github.com/thedmd/imgui-node-editor/blob/master/imgui_node_editor.h#L334).
+[Upstream link](https://github.com/thedmd/imgui-node-editor/blob/master/imgui_node_editor.h#L335).
 """
 BeginCreate(color::Union{ImVec4,NTuple{4}} = ImVec4(1, 1, 1, 1), thickness = 1.0f0) =
     lib.ax_NodeEditor_BeginCreate(color, thickness)
@@ -347,7 +347,7 @@ BeginCreate(color::Union{ImVec4,NTuple{4}} = ImVec4(1, 1, 1, 1), thickness = 1.0
 """
 $(TYPEDSIGNATURES)
 
-[Upstream link](https://github.com/thedmd/imgui-node-editor/blob/master/imgui_node_editor.h#L335).
+[Upstream link](https://github.com/thedmd/imgui-node-editor/blob/master/imgui_node_editor.h#L337).
 """
 QueryNewLink(startId::VoidablePtrOrRef{PinId}, endId::VoidablePtrOrRef{PinId}) =
     lib.ax_NodeEditor_QueryNewLink_Nil(startId, endId)
@@ -355,7 +355,7 @@ QueryNewLink(startId::VoidablePtrOrRef{PinId}, endId::VoidablePtrOrRef{PinId}) =
 """
 $(TYPEDSIGNATURES)
 
-[Upstream link](https://github.com/thedmd/imgui-node-editor/blob/master/imgui_node_editor.h#L336).
+[Upstream link](https://github.com/thedmd/imgui-node-editor/blob/master/imgui_node_editor.h#L338).
 """
 QueryNewLink(
     startId::VoidablePtrOrRef{PinId},
@@ -367,14 +367,14 @@ QueryNewLink(
 """
 $(TYPEDSIGNATURES)
 
-[Upstream link](https://github.com/thedmd/imgui-node-editor/blob/master/imgui_node_editor.h#L337).
+[Upstream link](https://github.com/thedmd/imgui-node-editor/blob/master/imgui_node_editor.h#L339).
 """
 QueryNewNode(pinId::VoidablePtrOrRef{PinId}) = lib.ax_NodeEditor_QueryNewNode_Nil(pinId)
 
 """
 $(TYPEDSIGNATURES)
 
-[Upstream link](https://github.com/thedmd/imgui-node-editor/blob/master/imgui_node_editor.h#L338).
+[Upstream link](https://github.com/thedmd/imgui-node-editor/blob/master/imgui_node_editor.h#L340).
 """
 QueryNewNode(pinId::VoidablePtrOrRef{PinId}, color::Union{ImVec4,NTuple{4}}, thickness::Real = 1.0f0) =
     lib.ax_NodeEditor_QueryNewNode_Vec4(pinId, color, thickness)
@@ -382,14 +382,14 @@ QueryNewNode(pinId::VoidablePtrOrRef{PinId}, color::Union{ImVec4,NTuple{4}}, thi
 """
 $(TYPEDSIGNATURES)
 
-[Upstream link](https://github.com/thedmd/imgui-node-editor/blob/master/imgui_node_editor.h#L339).
+[Upstream link](https://github.com/thedmd/imgui-node-editor/blob/master/imgui_node_editor.h#L341).
 """
 AcceptNewItem() = lib.ax_NodeEditor_AcceptNewItem_Nil()
 
 """
 $(TYPEDSIGNATURES)
 
-[Upstream link](https://github.com/thedmd/imgui-node-editor/blob/master/imgui_node_editor.h#L340).
+[Upstream link](https://github.com/thedmd/imgui-node-editor/blob/master/imgui_node_editor.h#L342).
 """
 AcceptNewItem(color::Union{ImVec4,NTuple{4}}, thickness::Real = 1.0f0) =
     lib.ax_NodeEditor_AcceptNewItem_Vec4(color, thickness)
@@ -397,14 +397,14 @@ AcceptNewItem(color::Union{ImVec4,NTuple{4}}, thickness::Real = 1.0f0) =
 """
 $(TYPEDSIGNATURES)
 
-[Upstream link](https://github.com/thedmd/imgui-node-editor/blob/master/imgui_node_editor.h#L341).
+[Upstream link](https://github.com/thedmd/imgui-node-editor/blob/master/imgui_node_editor.h#L343).
 """
 RejectNewItem() = lib.ax_NodeEditor_RejectNewItem_Nil()
 
 """
 $(TYPEDSIGNATURES)
 
-[Upstream link](https://github.com/thedmd/imgui-node-editor/blob/master/imgui_node_editor.h#L342).
+[Upstream link](https://github.com/thedmd/imgui-node-editor/blob/master/imgui_node_editor.h#L344).
 """
 RejectNewItem(color::Union{ImVec4,NTuple{4}}, thickness::Real = 1.0f0) =
     lib.ax_NodeEditor_RejectNewItem_Vec4(color, thickness)
@@ -412,21 +412,21 @@ RejectNewItem(color::Union{ImVec4,NTuple{4}}, thickness::Real = 1.0f0) =
 """
 $(TYPEDSIGNATURES)
 
-[Upstream link](https://github.com/thedmd/imgui-node-editor/blob/master/imgui_node_editor.h#L343).
+[Upstream link](https://github.com/thedmd/imgui-node-editor/blob/master/imgui_node_editor.h#L345).
 """
 EndCreate() = lib.ax_NodeEditor_EndCreate()
 
 """
 $(TYPEDSIGNATURES)
 
-[Upstream link](https://github.com/thedmd/imgui-node-editor/blob/master/imgui_node_editor.h#L345).
+[Upstream link](https://github.com/thedmd/imgui-node-editor/blob/master/imgui_node_editor.h#L347).
 """
 BeginDelete() = lib.ax_NodeEditor_BeginDelete()
 
 """
 $(TYPEDSIGNATURES)
 
-[Upstream link](https://github.com/thedmd/imgui-node-editor/blob/master/imgui_node_editor.h#L346).
+[Upstream link](https://github.com/thedmd/imgui-node-editor/blob/master/imgui_node_editor.h#L348).
 """
 QueryDeletedLink(
     linkId::VoidablePtrOrRef{LinkId},
@@ -437,35 +437,35 @@ QueryDeletedLink(
 """
 $(TYPEDSIGNATURES)
 
-[Upstream link](https://github.com/thedmd/imgui-node-editor/blob/master/imgui_node_editor.h#L347).
+[Upstream link](https://github.com/thedmd/imgui-node-editor/blob/master/imgui_node_editor.h#L349).
 """
 QueryDeletedNode(nodeId::VoidablePtrOrRef{NodeId}) = lib.ax_NodeEditor_QueryDeletedNode(nodeId)
 
 """
 $(TYPEDSIGNATURES)
 
-[Upstream link](https://github.com/thedmd/imgui-node-editor/blob/master/imgui_node_editor.h#L348).
+[Upstream link](https://github.com/thedmd/imgui-node-editor/blob/master/imgui_node_editor.h#L350).
 """
 AcceptDeletedItem(deleteDependencies = true) = lib.ax_NodeEditor_AcceptDeletedItem(deleteDependencies)
 
 """
 $(TYPEDSIGNATURES)
 
-[Upstream link](https://github.com/thedmd/imgui-node-editor/blob/master/imgui_node_editor.h#L349).
+[Upstream link](https://github.com/thedmd/imgui-node-editor/blob/master/imgui_node_editor.h#L351).
 """
 RejectDeletedItem() = lib.ax_NodeEditor_RejectDeletedItem()
 
 """
 $(TYPEDSIGNATURES)
 
-[Upstream link](https://github.com/thedmd/imgui-node-editor/blob/master/imgui_node_editor.h#L350).
+[Upstream link](https://github.com/thedmd/imgui-node-editor/blob/master/imgui_node_editor.h#L352).
 """
 EndDelete() = lib.ax_NodeEditor_EndDelete()
 
 """
 $(TYPEDSIGNATURES)
 
-[Upstream link](https://github.com/thedmd/imgui-node-editor/blob/master/imgui_node_editor.h#L352).
+[Upstream link](https://github.com/thedmd/imgui-node-editor/blob/master/imgui_node_editor.h#L354).
 """
 SetNodePosition(nodeId::NodeId, editorPosition::Union{ImVec2,NTuple{2}}) =
     lib.ax_NodeEditor_SetNodePosition(nodeId, editorPosition)
@@ -473,98 +473,98 @@ SetNodePosition(nodeId::NodeId, editorPosition::Union{ImVec2,NTuple{2}}) =
 """
 $(TYPEDSIGNATURES)
 
-[Upstream link](https://github.com/thedmd/imgui-node-editor/blob/master/imgui_node_editor.h#L353).
+[Upstream link](https://github.com/thedmd/imgui-node-editor/blob/master/imgui_node_editor.h#L355).
 """
 SetGroupSize(nodeId::NodeId, size::Union{ImVec2,NTuple{2}}) = lib.ax_NodeEditor_SetGroupSize(nodeId, size)
 
 """
 $(TYPEDSIGNATURES)
 
-[Upstream link](https://github.com/thedmd/imgui-node-editor/blob/master/imgui_node_editor.h#L354).
+[Upstream link](https://github.com/thedmd/imgui-node-editor/blob/master/imgui_node_editor.h#L356).
 """
 GetNodePosition(nodeId::NodeId) = lib.ax_NodeEditor_GetNodePosition(nodeId)
 
 """
 $(TYPEDSIGNATURES)
 
-[Upstream link](https://github.com/thedmd/imgui-node-editor/blob/master/imgui_node_editor.h#L355).
+[Upstream link](https://github.com/thedmd/imgui-node-editor/blob/master/imgui_node_editor.h#L357).
 """
 GetNodeSize(nodeId::NodeId) = lib.ax_NodeEditor_GetNodeSize(nodeId)
 
 """
 $(TYPEDSIGNATURES)
 
-[Upstream link](https://github.com/thedmd/imgui-node-editor/blob/master/imgui_node_editor.h#L356).
+[Upstream link](https://github.com/thedmd/imgui-node-editor/blob/master/imgui_node_editor.h#L358).
 """
 CenterNodeOnScreen(nodeId::NodeId) = lib.ax_NodeEditor_CenterNodeOnScreen(nodeId)
 
 """
 $(TYPEDSIGNATURES)
 
-[Upstream link](https://github.com/thedmd/imgui-node-editor/blob/master/imgui_node_editor.h#L357).
+[Upstream link](https://github.com/thedmd/imgui-node-editor/blob/master/imgui_node_editor.h#L359).
 """
 SetNodeZPosition(nodeId::NodeId, z) = lib.ax_NodeEditor_SetNodeZPosition(nodeId, z)
 
 """
 $(TYPEDSIGNATURES)
 
-[Upstream link](https://github.com/thedmd/imgui-node-editor/blob/master/imgui_node_editor.h#L358).
+[Upstream link](https://github.com/thedmd/imgui-node-editor/blob/master/imgui_node_editor.h#L360).
 """
 GetNodeZPosition(nodeId::NodeId) = lib.ax_NodeEditor_GetNodeZPosition(nodeId)
 
 """
 $(TYPEDSIGNATURES)
 
-[Upstream link](https://github.com/thedmd/imgui-node-editor/blob/master/imgui_node_editor.h#L360).
+[Upstream link](https://github.com/thedmd/imgui-node-editor/blob/master/imgui_node_editor.h#L362).
 """
 RestoreNodeState(nodeId::NodeId) = lib.ax_NodeEditor_RestoreNodeState(nodeId)
 
 """
 $(TYPEDSIGNATURES)
 
-[Upstream link](https://github.com/thedmd/imgui-node-editor/blob/master/imgui_node_editor.h#L362).
+[Upstream link](https://github.com/thedmd/imgui-node-editor/blob/master/imgui_node_editor.h#L364).
 """
 Suspend() = lib.ax_NodeEditor_Suspend()
 
 """
 $(TYPEDSIGNATURES)
 
-[Upstream link](https://github.com/thedmd/imgui-node-editor/blob/master/imgui_node_editor.h#L363).
+[Upstream link](https://github.com/thedmd/imgui-node-editor/blob/master/imgui_node_editor.h#L365).
 """
 Resume() = lib.ax_NodeEditor_Resume()
 
 """
 $(TYPEDSIGNATURES)
 
-[Upstream link](https://github.com/thedmd/imgui-node-editor/blob/master/imgui_node_editor.h#L364).
+[Upstream link](https://github.com/thedmd/imgui-node-editor/blob/master/imgui_node_editor.h#L366).
 """
 IsSuspended() = lib.ax_NodeEditor_IsSuspended()
 
 """
 $(TYPEDSIGNATURES)
 
-[Upstream link](https://github.com/thedmd/imgui-node-editor/blob/master/imgui_node_editor.h#L366).
+[Upstream link](https://github.com/thedmd/imgui-node-editor/blob/master/imgui_node_editor.h#L368).
 """
 IsActive() = lib.ax_NodeEditor_IsActive()
 
 """
 $(TYPEDSIGNATURES)
 
-[Upstream link](https://github.com/thedmd/imgui-node-editor/blob/master/imgui_node_editor.h#L368).
+[Upstream link](https://github.com/thedmd/imgui-node-editor/blob/master/imgui_node_editor.h#L370).
 """
 HasSelectionChanged() = lib.ax_NodeEditor_HasSelectionChanged()
 
 """
 $(TYPEDSIGNATURES)
 
-[Upstream link](https://github.com/thedmd/imgui-node-editor/blob/master/imgui_node_editor.h#L369).
+[Upstream link](https://github.com/thedmd/imgui-node-editor/blob/master/imgui_node_editor.h#L371).
 """
 GetSelectedObjectCount() = lib.ax_NodeEditor_GetSelectedObjectCount()
 
 """
 $(TYPEDSIGNATURES)
 
-[Upstream link](https://github.com/thedmd/imgui-node-editor/blob/master/imgui_node_editor.h#L370).
+[Upstream link](https://github.com/thedmd/imgui-node-editor/blob/master/imgui_node_editor.h#L372).
 
 `ids` is resized to fit and returned.
 """
@@ -584,7 +584,7 @@ GetSelectedNodes() = GetSelectedNodes!(NodeId[])
 """
 $(TYPEDSIGNATURES)
 
-[Upstream link](https://github.com/thedmd/imgui-node-editor/blob/master/imgui_node_editor.h#L371).
+[Upstream link](https://github.com/thedmd/imgui-node-editor/blob/master/imgui_node_editor.h#L373).
 
 `ids` is resized to fit and returned.
 """
@@ -604,203 +604,203 @@ GetSelectedLinks() = GetSelectedLinks!(LinkId[])
 """
 $(TYPEDSIGNATURES)
 
-[Upstream link](https://github.com/thedmd/imgui-node-editor/blob/master/imgui_node_editor.h#L372).
+[Upstream link](https://github.com/thedmd/imgui-node-editor/blob/master/imgui_node_editor.h#L374).
 """
 IsNodeSelected(nodeId::NodeId) = lib.ax_NodeEditor_IsNodeSelected(nodeId)
 
 """
 $(TYPEDSIGNATURES)
 
-[Upstream link](https://github.com/thedmd/imgui-node-editor/blob/master/imgui_node_editor.h#L373).
+[Upstream link](https://github.com/thedmd/imgui-node-editor/blob/master/imgui_node_editor.h#L375).
 """
 IsLinkSelected(linkId) = lib.ax_NodeEditor_IsLinkSelected(linkId)
 
 """
 $(TYPEDSIGNATURES)
 
-[Upstream link](https://github.com/thedmd/imgui-node-editor/blob/master/imgui_node_editor.h#L374).
+[Upstream link](https://github.com/thedmd/imgui-node-editor/blob/master/imgui_node_editor.h#L376).
 """
 ClearSelection() = lib.ax_NodeEditor_ClearSelection()
 
 """
 $(TYPEDSIGNATURES)
 
-[Upstream link](https://github.com/thedmd/imgui-node-editor/blob/master/imgui_node_editor.h#L375).
+[Upstream link](https://github.com/thedmd/imgui-node-editor/blob/master/imgui_node_editor.h#L377).
 """
 SelectNode(nodeId::NodeId, append = false) = lib.ax_NodeEditor_SelectNode(nodeId, append)
 
 """
 $(TYPEDSIGNATURES)
 
-[Upstream link](https://github.com/thedmd/imgui-node-editor/blob/master/imgui_node_editor.h#L376).
+[Upstream link](https://github.com/thedmd/imgui-node-editor/blob/master/imgui_node_editor.h#L378).
 """
 SelectLink(linkId, append = false) = lib.ax_NodeEditor_SelectLink(linkId, append)
 
 """
 $(TYPEDSIGNATURES)
 
-[Upstream link](https://github.com/thedmd/imgui-node-editor/blob/master/imgui_node_editor.h#L377).
+[Upstream link](https://github.com/thedmd/imgui-node-editor/blob/master/imgui_node_editor.h#L379).
 """
 DeselectNode(nodeId::NodeId) = lib.ax_NodeEditor_DeselectNode(nodeId)
 
 """
 $(TYPEDSIGNATURES)
 
-[Upstream link](https://github.com/thedmd/imgui-node-editor/blob/master/imgui_node_editor.h#L378).
+[Upstream link](https://github.com/thedmd/imgui-node-editor/blob/master/imgui_node_editor.h#L380).
 """
 DeselectLink(linkId) = lib.ax_NodeEditor_DeselectLink(linkId)
 
 """
 $(TYPEDSIGNATURES)
 
-[Upstream link](https://github.com/thedmd/imgui-node-editor/blob/master/imgui_node_editor.h#L380).
+[Upstream link](https://github.com/thedmd/imgui-node-editor/blob/master/imgui_node_editor.h#L382).
 """
 DeleteNode(nodeId::NodeId) = lib.ax_NodeEditor_DeleteNode(nodeId)
 
 """
 $(TYPEDSIGNATURES)
 
-[Upstream link](https://github.com/thedmd/imgui-node-editor/blob/master/imgui_node_editor.h#L381).
+[Upstream link](https://github.com/thedmd/imgui-node-editor/blob/master/imgui_node_editor.h#L383).
 """
 DeleteLink(linkId) = lib.ax_NodeEditor_DeleteLink(linkId)
 
 """
 $(TYPEDSIGNATURES)
 
-[Upstream link](https://github.com/thedmd/imgui-node-editor/blob/master/imgui_node_editor.h#L383).
+[Upstream link](https://github.com/thedmd/imgui-node-editor/blob/master/imgui_node_editor.h#L385).
 """
 HasAnyLinks(nodeId::NodeId) = lib.ax_NodeEditor_HasAnyLinks_NodeId(nodeId)
 
 """
 $(TYPEDSIGNATURES)
 
-[Upstream link](https://github.com/thedmd/imgui-node-editor/blob/master/imgui_node_editor.h#L384).
+[Upstream link](https://github.com/thedmd/imgui-node-editor/blob/master/imgui_node_editor.h#L386).
 """
 HasAnyLinks(pinId::PinId) = lib.ax_NodeEditor_HasAnyLinks_PinId(pinId)
 
 """
 $(TYPEDSIGNATURES)
 
-[Upstream link](https://github.com/thedmd/imgui-node-editor/blob/master/imgui_node_editor.h#L385).
+[Upstream link](https://github.com/thedmd/imgui-node-editor/blob/master/imgui_node_editor.h#L387).
 """
 BreakLinks(nodeId::NodeId) = lib.ax_NodeEditor_BreakLinks_NodeId(nodeId)
 
 """
 $(TYPEDSIGNATURES)
 
-[Upstream link](https://github.com/thedmd/imgui-node-editor/blob/master/imgui_node_editor.h#L386).
+[Upstream link](https://github.com/thedmd/imgui-node-editor/blob/master/imgui_node_editor.h#L388).
 """
 BreakLinks(pinId::PinId) = lib.ax_NodeEditor_BreakLinks_PinId(pinId)
 
 """
 $(TYPEDSIGNATURES)
 
-[Upstream link](https://github.com/thedmd/imgui-node-editor/blob/master/imgui_node_editor.h#L388).
+[Upstream link](https://github.com/thedmd/imgui-node-editor/blob/master/imgui_node_editor.h#L390).
 """
 NavigateToContent(duration = -1) = lib.ax_NodeEditor_NavigateToContent(duration)
 
 """
 $(TYPEDSIGNATURES)
 
-[Upstream link](https://github.com/thedmd/imgui-node-editor/blob/master/imgui_node_editor.h#L389).
+[Upstream link](https://github.com/thedmd/imgui-node-editor/blob/master/imgui_node_editor.h#L391).
 """
 NavigateToSelection(zoomIn = false, duration = -1) = lib.ax_NodeEditor_NavigateToSelection(zoomIn, duration)
 
 """
 $(TYPEDSIGNATURES)
 
-[Upstream link](https://github.com/thedmd/imgui-node-editor/blob/master/imgui_node_editor.h#L391).
+[Upstream link](https://github.com/thedmd/imgui-node-editor/blob/master/imgui_node_editor.h#L393).
 """
 ShowNodeContextMenu(nodeId::VoidablePtrOrRef{NodeId}) = lib.ax_NodeEditor_ShowNodeContextMenu(nodeId)
 
 """
 $(TYPEDSIGNATURES)
 
-[Upstream link](https://github.com/thedmd/imgui-node-editor/blob/master/imgui_node_editor.h#L392).
+[Upstream link](https://github.com/thedmd/imgui-node-editor/blob/master/imgui_node_editor.h#L394).
 """
 ShowPinContextMenu(pinId::VoidablePtrOrRef{PinId}) = lib.ax_NodeEditor_ShowPinContextMenu(pinId)
 
 """
 $(TYPEDSIGNATURES)
 
-[Upstream link](https://github.com/thedmd/imgui-node-editor/blob/master/imgui_node_editor.h#L393).
+[Upstream link](https://github.com/thedmd/imgui-node-editor/blob/master/imgui_node_editor.h#L395).
 """
 ShowLinkContextMenu(linkId::VoidablePtrOrRef{LinkId}) = lib.ax_NodeEditor_ShowLinkContextMenu(linkId)
 
 """
 $(TYPEDSIGNATURES)
 
-[Upstream link](https://github.com/thedmd/imgui-node-editor/blob/master/imgui_node_editor.h#L394).
+[Upstream link](https://github.com/thedmd/imgui-node-editor/blob/master/imgui_node_editor.h#L396).
 """
 ShowBackgroundContextMenu() = lib.ax_NodeEditor_ShowBackgroundContextMenu()
 
 """
 $(TYPEDSIGNATURES)
 
-[Upstream link](https://github.com/thedmd/imgui-node-editor/blob/master/imgui_node_editor.h#L396).
+[Upstream link](https://github.com/thedmd/imgui-node-editor/blob/master/imgui_node_editor.h#L398).
 """
 EnableShortcuts(enable) = lib.ax_NodeEditor_EnableShortcuts(enable)
 
 """
 $(TYPEDSIGNATURES)
 
-[Upstream link](https://github.com/thedmd/imgui-node-editor/blob/master/imgui_node_editor.h#L397).
+[Upstream link](https://github.com/thedmd/imgui-node-editor/blob/master/imgui_node_editor.h#L399).
 """
 AreShortcutsEnabled() = lib.ax_NodeEditor_AreShortcutsEnabled()
 
 """
 $(TYPEDSIGNATURES)
 
-[Upstream link](https://github.com/thedmd/imgui-node-editor/blob/master/imgui_node_editor.h#L399).
+[Upstream link](https://github.com/thedmd/imgui-node-editor/blob/master/imgui_node_editor.h#L401).
 """
 BeginShortcut() = lib.ax_NodeEditor_BeginShortcut()
 
 """
 $(TYPEDSIGNATURES)
 
-[Upstream link](https://github.com/thedmd/imgui-node-editor/blob/master/imgui_node_editor.h#L400).
+[Upstream link](https://github.com/thedmd/imgui-node-editor/blob/master/imgui_node_editor.h#L402).
 """
 AcceptCut() = lib.ax_NodeEditor_AcceptCut()
 
 """
 $(TYPEDSIGNATURES)
 
-[Upstream link](https://github.com/thedmd/imgui-node-editor/blob/master/imgui_node_editor.h#L401).
+[Upstream link](https://github.com/thedmd/imgui-node-editor/blob/master/imgui_node_editor.h#L403).
 """
 AcceptCopy() = lib.ax_NodeEditor_AcceptCopy()
 
 """
 $(TYPEDSIGNATURES)
 
-[Upstream link](https://github.com/thedmd/imgui-node-editor/blob/master/imgui_node_editor.h#L402).
+[Upstream link](https://github.com/thedmd/imgui-node-editor/blob/master/imgui_node_editor.h#L404).
 """
 AcceptPaste() = lib.ax_NodeEditor_AcceptPaste()
 
 """
 $(TYPEDSIGNATURES)
 
-[Upstream link](https://github.com/thedmd/imgui-node-editor/blob/master/imgui_node_editor.h#L403).
+[Upstream link](https://github.com/thedmd/imgui-node-editor/blob/master/imgui_node_editor.h#L405).
 """
 AcceptDuplicate() = lib.ax_NodeEditor_AcceptDuplicate()
 
 """
 $(TYPEDSIGNATURES)
 
-[Upstream link](https://github.com/thedmd/imgui-node-editor/blob/master/imgui_node_editor.h#L404).
+[Upstream link](https://github.com/thedmd/imgui-node-editor/blob/master/imgui_node_editor.h#L406).
 """
 AcceptCreateNode() = lib.ax_NodeEditor_AcceptCreateNode()
 
 """
 $(TYPEDSIGNATURES)
 
-[Upstream link](https://github.com/thedmd/imgui-node-editor/blob/master/imgui_node_editor.h#L405).
+[Upstream link](https://github.com/thedmd/imgui-node-editor/blob/master/imgui_node_editor.h#L407).
 """
 GetActionContextSize() = lib.ax_NodeEditor_GetActionContextSize()
 
 """
 $(TYPEDSIGNATURES)
 
-[Upstream link](https://github.com/thedmd/imgui-node-editor/blob/master/imgui_node_editor.h#L406).
+[Upstream link](https://github.com/thedmd/imgui-node-editor/blob/master/imgui_node_editor.h#L408).
 
 `ids` is resized to fit and returned.
 """
@@ -820,7 +820,7 @@ GetActionContextNodes() = GetActionContextNodes!(NodeId[])
 """
 $(TYPEDSIGNATURES)
 
-[Upstream link](https://github.com/thedmd/imgui-node-editor/blob/master/imgui_node_editor.h#L407).
+[Upstream link](https://github.com/thedmd/imgui-node-editor/blob/master/imgui_node_editor.h#L409).
 
 `ids` is resized to fit and returned.
 """
@@ -840,91 +840,91 @@ GetActionContextLinks() = GetActionContextLinks!(LinkId[])
 """
 $(TYPEDSIGNATURES)
 
-[Upstream link](https://github.com/thedmd/imgui-node-editor/blob/master/imgui_node_editor.h#L408).
+[Upstream link](https://github.com/thedmd/imgui-node-editor/blob/master/imgui_node_editor.h#L410).
 """
 EndShortcut() = lib.ax_NodeEditor_EndShortcut()
 
 """
 $(TYPEDSIGNATURES)
 
-[Upstream link](https://github.com/thedmd/imgui-node-editor/blob/master/imgui_node_editor.h#L410).
+[Upstream link](https://github.com/thedmd/imgui-node-editor/blob/master/imgui_node_editor.h#L412).
 """
 GetCurrentZoom() = lib.ax_NodeEditor_GetCurrentZoom()
 
 """
 $(TYPEDSIGNATURES)
 
-[Upstream link](https://github.com/thedmd/imgui-node-editor/blob/master/imgui_node_editor.h#L412).
+[Upstream link](https://github.com/thedmd/imgui-node-editor/blob/master/imgui_node_editor.h#L414).
 """
 GetHoveredNode() = lib.ax_NodeEditor_GetHoveredNode()
 
 """
 $(TYPEDSIGNATURES)
 
-[Upstream link](https://github.com/thedmd/imgui-node-editor/blob/master/imgui_node_editor.h#L413).
+[Upstream link](https://github.com/thedmd/imgui-node-editor/blob/master/imgui_node_editor.h#L415).
 """
 GetHoveredPin() = lib.ax_NodeEditor_GetHoveredPin()
 
 """
 $(TYPEDSIGNATURES)
 
-[Upstream link](https://github.com/thedmd/imgui-node-editor/blob/master/imgui_node_editor.h#L414).
+[Upstream link](https://github.com/thedmd/imgui-node-editor/blob/master/imgui_node_editor.h#L416).
 """
 GetHoveredLink() = lib.ax_NodeEditor_GetHoveredLink()
 
 """
 $(TYPEDSIGNATURES)
 
-[Upstream link](https://github.com/thedmd/imgui-node-editor/blob/master/imgui_node_editor.h#L415).
+[Upstream link](https://github.com/thedmd/imgui-node-editor/blob/master/imgui_node_editor.h#L417).
 """
 GetDoubleClickedNode() = lib.ax_NodeEditor_GetDoubleClickedNode()
 
 """
 $(TYPEDSIGNATURES)
 
-[Upstream link](https://github.com/thedmd/imgui-node-editor/blob/master/imgui_node_editor.h#L416).
+[Upstream link](https://github.com/thedmd/imgui-node-editor/blob/master/imgui_node_editor.h#L418).
 """
 GetDoubleClickedPin() = lib.ax_NodeEditor_GetDoubleClickedPin()
 
 """
 $(TYPEDSIGNATURES)
 
-[Upstream link](https://github.com/thedmd/imgui-node-editor/blob/master/imgui_node_editor.h#L417).
+[Upstream link](https://github.com/thedmd/imgui-node-editor/blob/master/imgui_node_editor.h#L419).
 """
 GetDoubleClickedLink() = lib.ax_NodeEditor_GetDoubleClickedLink()
 
 """
 $(TYPEDSIGNATURES)
 
-[Upstream link](https://github.com/thedmd/imgui-node-editor/blob/master/imgui_node_editor.h#L418).
+[Upstream link](https://github.com/thedmd/imgui-node-editor/blob/master/imgui_node_editor.h#L420).
 """
 IsBackgroundClicked() = lib.ax_NodeEditor_IsBackgroundClicked()
 
 """
 $(TYPEDSIGNATURES)
 
-[Upstream link](https://github.com/thedmd/imgui-node-editor/blob/master/imgui_node_editor.h#L419).
+[Upstream link](https://github.com/thedmd/imgui-node-editor/blob/master/imgui_node_editor.h#L421).
 """
 IsBackgroundDoubleClicked() = lib.ax_NodeEditor_IsBackgroundDoubleClicked()
 
 """
 $(TYPEDSIGNATURES)
 
-[Upstream link](https://github.com/thedmd/imgui-node-editor/blob/master/imgui_node_editor.h#L420).
+[Upstream link](https://github.com/thedmd/imgui-node-editor/blob/master/imgui_node_editor.h#L422).
 """
 GetBackgroundClickButtonIndex() = lib.ax_NodeEditor_GetBackgroundClickButtonIndex()
 
 """
 $(TYPEDSIGNATURES)
 
-[Upstream link](https://github.com/thedmd/imgui-node-editor/blob/master/imgui_node_editor.h#L421).
+[Upstream link](https://github.com/thedmd/imgui-node-editor/blob/master/imgui_node_editor.h#L423).
 """
 GetBackgroundDoubleClickButtonIndex() = lib.ax_NodeEditor_GetBackgroundDoubleClickButtonIndex()
 
 """
 $(TYPEDSIGNATURES)
 
-[Upstream link](https://github.com/thedmd/imgui-node-editor/blob/master/imgui_node_editor.h#L423).
+[Upstream link](https://github.com/thedmd/imgui-node-editor/blob/master/imgui_node_editor.h#L425).
 """
 GetLinkPins(linkId, startPinId::VoidablePtrOrRef{PinId}, endPinId::VoidablePtrOrRef{PinId}) =
     lib.ax_NodeEditor_GetLinkPins(linkId, startPinId, endPinId)
@@ -932,42 +932,42 @@ GetLinkPins(linkId, startPinId::VoidablePtrOrRef{PinId}, endPinId::VoidablePtrOr
 """
 $(TYPEDSIGNATURES)
 
-[Upstream link](https://github.com/thedmd/imgui-node-editor/blob/master/imgui_node_editor.h#L425).
+[Upstream link](https://github.com/thedmd/imgui-node-editor/blob/master/imgui_node_editor.h#L427).
 """
 PinHadAnyLinks(pinId::PinId) = lib.ax_NodeEditor_PinHadAnyLinks(pinId)
 
 """
 $(TYPEDSIGNATURES)
 
-[Upstream link](https://github.com/thedmd/imgui-node-editor/blob/master/imgui_node_editor.h#L427).
+[Upstream link](https://github.com/thedmd/imgui-node-editor/blob/master/imgui_node_editor.h#L429).
 """
 GetScreenSize() = lib.ax_NodeEditor_GetScreenSize()
 
 """
 $(TYPEDSIGNATURES)
 
-[Upstream link](https://github.com/thedmd/imgui-node-editor/blob/master/imgui_node_editor.h#L428).
+[Upstream link](https://github.com/thedmd/imgui-node-editor/blob/master/imgui_node_editor.h#L430).
 """
 ScreenToCanvas(pos::Union{ImVec2,NTuple{2}}) = lib.ax_NodeEditor_ScreenToCanvas(pos)
 
 """
 $(TYPEDSIGNATURES)
 
-[Upstream link](https://github.com/thedmd/imgui-node-editor/blob/master/imgui_node_editor.h#L429).
+[Upstream link](https://github.com/thedmd/imgui-node-editor/blob/master/imgui_node_editor.h#L431).
 """
 CanvasToScreen(pos::Union{ImVec2,NTuple{2}}) = lib.ax_NodeEditor_CanvasToScreen(pos)
 
 """
 $(TYPEDSIGNATURES)
 
-[Upstream link](https://github.com/thedmd/imgui-node-editor/blob/master/imgui_node_editor.h#L431).
+[Upstream link](https://github.com/thedmd/imgui-node-editor/blob/master/imgui_node_editor.h#L433).
 """
 GetNodeCount() = lib.ax_NodeEditor_GetNodeCount()
 
 """
 $(TYPEDSIGNATURES)
 
-[Upstream link](https://github.com/thedmd/imgui-node-editor/blob/master/imgui_node_editor.h#L432).
+[Upstream link](https://github.com/thedmd/imgui-node-editor/blob/master/imgui_node_editor.h#L434).
 
 `ids` is resized to fit and returned.
 """
